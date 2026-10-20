@@ -626,7 +626,24 @@ function selectTop(n){
   selected.forEach(g=>gst(g.id).status='invited');
   tionti(selected); // plan for exactly these guests
 }
-function fitWindow(){plan.slots.forEach(s=>{s.start=Math.max(T0,s.start);s.end=Math.min(T1,s.end)})}
+function fitWindow(){
+  plan.slots.forEach(s=>{s.start=Math.max(T0,s.start);s.end=Math.min(T1,s.end)});
+  // Auto-assign partnerIndex to any slot that doesn't have one yet
+  const used=new Set(plan.slots.map(s=>s.partnerIndex).filter(Boolean));
+  let n=1;
+  plan.slots.forEach(s=>{
+    if(!s.partnerIndex){
+      while(used.has('V'+String(n).padStart(3,'0')))n++;
+      s.partnerIndex='V'+String(n).padStart(3,'0');
+      used.add(s.partnerIndex);n++;
+    }
+  });
+}
+function nextPartnerIndex(){
+  const used=new Set(plan.slots.map(s=>s.partnerIndex).filter(Boolean));
+  let n=1;while(used.has('V'+String(n).padStart(3,'0')))n++;
+  return 'V'+String(n).padStart(3,'0');
+}
 const X=m=>((m-T0)/(T1-T0))*100;
 
 /* ---------- header ---------- */
@@ -1510,7 +1527,7 @@ function whoIsHereHtml(s){
 /* ---------- drawer ---------- */
 let editing=null,pend=null;
 function editSlot(id){editing=id;pend=null;draw()}
-function addSlot(){const s={id:uid(),venue:'New partner',start:780,end:825,senses:[],status:'tentative',sizing:'flex',cap:null};
+function addSlot(){const s={id:uid(),venue:'New partner',start:780,end:825,senses:[],status:'tentative',sizing:'flex',cap:null,partnerIndex:nextPartnerIndex()};
   plan.slots.push(s);_vmap=null;editing=s.id;pend=null;save();render();draw()}
 function draw(){
   if(!editing)return drawerHost.innerHTML='';
@@ -1527,13 +1544,19 @@ function draw(){
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
       <div>
         <div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px">Partner slot</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
         <div style="font-size:18px;font-weight:700;line-height:1.2">${esc(s.venue)}</div>
+        ${s.partnerIndex?`<span style="font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:.06em">${esc(s.partnerIndex)}</span>`:''}
+      </div>
       </div>
       <span style="font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:3px;background:${s.status==='confirmed'?'#d6f0df':s.status==='dropped'?'#f0e0e0':'#f5f0e0'};color:${s.status==='confirmed'?'#1a6b2a':s.status==='dropped'?'#8b1a1a':'#7a5800'};margin-top:4px">${s.status}</span>
     </div>
 
     ${sec('Venue &amp; timing',`
-      <div class="field"><input id="e_v" value="${esc(s.venue)}" placeholder="Venue name"></div>
+      <div class="row2" style="align-items:flex-end">
+        <div class="field" style="flex:1"><input id="e_v" value="${esc(s.venue)}" placeholder="Venue name"></div>
+        <div class="field" style="flex:0 0 80px"><label class="eyebrow" title="Unique partner ID for matching to external databases">Index</label><input id="e_pidx" value="${esc(s.partnerIndex||'')}" placeholder="V001" style="font-family:var(--mono);font-size:12px"></div>
+      </div>
       <div class="row2">
         <div class="field" style="flex:1"><label class="eyebrow">Start</label><input id="e_a" value="${ti(s.start)}"></div>
         <div class="field" style="flex:1"><label class="eyebrow">End</label><input id="e_b" value="${ti(s.end)}"></div>
@@ -1868,6 +1891,8 @@ function setCostType(sid,type){
 }
 function saveSlot(replan){const s=slotById(editing);
   s.venue=e_v.value.trim()||'Untitled';
+  const pidxEl=document.getElementById('e_pidx');
+  if(pidxEl&&pidxEl.value.trim())s.partnerIndex=pidxEl.value.trim();
   s.start=Math.max(T0,Math.min(T1-15,pt(e_a.value)??s.start));
   s.end=Math.max(s.start+15,Math.min(T1,pt(e_b.value)??s.end));
   s.status=e_s.value;s.sizing=e_z.value;s.cap=s.sizing==='all'?null:(parseInt(e_c.value)||(s.sizing==='capped'?6:null));
@@ -1920,6 +1945,7 @@ function exportItinerariesJSON(){
       const legCostIn=commuteIn?legCost({mode:commuteIn.mode,mins:commuteIn.mins,miles:commuteIn.miles||null}):0;
       return {
         stop_number: i+1,
+        partner_index: s.partnerIndex||null,
         venue: s.venue,
         senses: s.senses||[],
         start_time: toTime(s.start),
@@ -2304,10 +2330,11 @@ function viewMetrics(){
 
     ${mSec('capacity','Slot capacity',`${confirmed.length} confirmed, ${tentative.length} tentative across ${allSlots.length} total slots.`,`
       <table class="ledger" style="width:100%">
-        <tr><th>Venue</th><th>Status</th><th>Senses</th><th style="text-align:right">Headcount / Cap</th></tr>
+        <tr><th>Index</th><th>Venue</th><th>Status</th><th>Senses</th><th style="text-align:right">Headcount / Cap</th></tr>
         ${allSlots.map(s=>{
           const hc=headcount(s);const cap=capOf(s);const over=hc>cap;
           return `<tr style="${over?'background:#fff5f5':''}">
+            <td style="font-family:var(--mono);font-size:10px;color:var(--ink3);white-space:nowrap">${esc(s.partnerIndex||'')}</td>
             <td><b>${esc(s.venue)}</b></td>
             <td><span style="font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:2px;background:${s.status==='confirmed'?'#d6f0df':s.status==='dropped'?'#f0e0e0':'#f5f0e0'};color:${s.status==='confirmed'?'#1a6b2a':s.status==='dropped'?'#8b1a1a':'#7a5800'}">${s.status}</span></td>
             <td style="font-size:11px">${(s.senses||[]).map(x=>`<span style="color:var(--${x})">${x}</span>`).join(', ')}</td>
