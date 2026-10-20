@@ -407,7 +407,7 @@ function legCost(l){
 const transitCost=g=>+legsOf(g).reduce((n,l)=>n+legCost(l),0).toFixed(2);
 const carLegs=g=>legsOf(g).filter(l=>l.mode==='car');
 const trainLegs=g=>legsOf(g).filter(l=>l.mode!=='walk'&&l.mode!=='car');
-const BUDGET_CAP=50; // max total per guest across all partner stops + transit
+const BUDGET_CAP=100; // max total per guest across all partner stops + transit
 const slotCost=(s)=>+(s.cost||0);  // per-guest cost set by organiser for this partner stop
 const venueCost=g=>itin(g).reduce((n,s)=>n+slotCost(s),0); // sum of all partner stop costs
 const totalEventCost=g=>+venueCost(g).toFixed(2); // partner stop costs only (not transit)
