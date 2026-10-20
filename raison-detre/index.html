@@ -1,0 +1,2380 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#E9EDEC;--card:#FFFFFF;--ink:#131B19;--ink2:#5B6765;--ink3:#909B99;
+  --rule:#C6CFCD;--rule2:#DDE3E2;--hl:#D6DCDA;
+  --Sight:#2F62D9;--Sound:#0F8A7E;--Scent:#7A45C4;--Taste:#CC3A44;
+  --Touch:#D9741A;--Space:#3D8A45;--Time:#B4157A;--System:#5B6472;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;--sans:'Archivo',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:500}
+.mono{font-family:var(--mono)}
+.wrap{max-width:1560px;margin:0 auto;padding:0 20px 90px}
+header{border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:40}
+.hbar{max-width:1560px;margin:0 auto;padding:13px 20px;display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap}
+h1{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:0}h1 span{color:var(--ink3);font-weight:400}
+.hstats{display:flex;gap:17px;margin-left:auto;align-items:flex-end;flex-wrap:wrap}
+.stat{text-align:right}.stat b{display:block;font-family:var(--mono);font-size:17px;font-weight:500;line-height:1.1}
+.tabs{max-width:1560px;margin:0 auto;padding:0 20px;display:flex;gap:2px;flex-wrap:wrap}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:7px 12px 9px;font-size:13px;font-weight:500;color:var(--ink2)}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ink)}
+.btn{background:var(--card);border:1px solid var(--rule);border-radius:2px;padding:6px 11px;font-size:12px;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}.btn.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.green{background:#1F7A4D;color:#fff;border-color:#1F7A4D}
+.btn.green:hover{background:#175C3A;border-color:#175C3A}
+.btn.sm{padding:3px 8px;font-size:11px;font-family:var(--mono)}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:20px 0 6px}
+.panel{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:14px 16px;margin-bottom:16px}
+h2{font-size:14px;font-weight:600;margin:0 0 2px;letter-spacing:-.01em}
+.note{font-size:12.5px;color:var(--ink2);margin:6px 0 0;max-width:86ch}
+/* timeline */
+.scroller{overflow-x:auto;background:var(--card);border:1px solid var(--rule);border-radius:3px}
+.tl{position:relative;min-width:1020px;--gut:190px}
+.ttrack{position:absolute;left:var(--gut);right:8px;top:0;bottom:0}
+.gridwrap{position:absolute;left:var(--gut);right:8px;top:0;bottom:0;pointer-events:none}
+.axis{position:relative;height:22px;border-bottom:1px solid var(--rule);margin-left:var(--gut);margin-right:8px;z-index:2}
+.tick{position:absolute;top:4px;font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.tick.edge{color:var(--ink);font-weight:600}
+.cap{position:absolute;top:0;bottom:-1px;border-left:2px solid var(--ink)}
+.vline{position:absolute;top:0;bottom:0;border-left:1px solid var(--rule2)}
+.vline.edge{border-left:2px solid var(--ink);opacity:.35}
+.trow{position:relative;height:34px;border-bottom:1px solid var(--rule2)}
+.trow:last-child{border-bottom:0}
+.tlab{position:absolute;left:0;top:0;bottom:0;width:var(--gut);background:var(--card);z-index:3;padding:8px 10px 0 12px;font-size:11.5px;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-right:1px solid var(--rule2)}
+.slot{position:absolute;top:4px;height:26px;z-index:2;border:1px solid var(--ink);border-radius:2px;background:var(--card);padding:0 6px;display:flex;align-items:center;gap:6px;font-size:11px;overflow:hidden;white-space:nowrap}
+.slot:hover{background:var(--hl)}
+.slot.tent{border-style:dashed;border-color:var(--ink2)}
+.slot.dropped{border:1px dotted var(--ink3);color:var(--ink3);text-decoration:line-through;opacity:.6}
+.slot.all{box-shadow:inset 0 0 0 2px var(--card),inset 0 0 0 3px var(--ink)}
+.slot.over{background:repeating-linear-gradient(45deg,transparent,transparent 4px,var(--hl) 4px,var(--hl) 8px)}
+.dot{width:7px;height:7px;border-radius:1px;display:inline-block;flex:none}
+.cnt{font-family:var(--mono);font-size:10px;color:var(--ink2);margin-left:auto}
+/* braid */
+.brow{position:relative;height:15px}
+.bname{position:absolute;left:0;width:var(--gut);top:0;background:var(--card);z-index:3;font-size:10.5px;padding-left:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2)}
+.seg{position:absolute;top:2px;height:11px;border-radius:1px;font-family:var(--mono);font-size:8px;color:#fff;text-align:center;line-height:11px;overflow:hidden}
+.idle{position:absolute;top:6px;height:3px;background:var(--rule2)}
+.leg{position:absolute;top:3px;height:9px;background:var(--ink2);color:var(--card);font-family:var(--mono);font-size:7px;line-height:9px;text-align:center;border-radius:1px;overflow:hidden}
+.leg.guess{background:none;border:1px dotted var(--ink3);color:var(--ink3);line-height:7px}
+.legin{width:44px;border:1px solid var(--rule2);border-radius:2px;padding:2px 4px;font-family:var(--mono);font-size:11px;text-align:center;background:var(--card)}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:12px}
+/* tables */
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--rule)}
+th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--rule)}
+td{padding:7px 10px;border-bottom:1px solid var(--rule2);vertical-align:middle}
+tr:hover td{background:#F6F8F7}tr.zero td{background:#F1EFEA}
+.ledger{border:0;background:none}.ledger td{padding:6px 0;border-bottom:1px solid var(--rule2)}
+.ledger td:last-child{text-align:right;font-family:var(--mono);white-space:nowrap;padding-left:10px}
+.ribbon{display:inline-flex;gap:2px}
+.cell{width:11px;height:16px;border-radius:1px;background:var(--rule2)}
+.cell.want{background:none;border:1px solid currentColor}
+.rhd{display:inline-flex;gap:2px}.rhd span{width:11px;font-family:var(--mono);font-size:7.5px;color:var(--ink3);text-align:center;overflow:hidden;line-height:1}
+.gname{font-weight:500}.gsub{font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+.flag{font-family:var(--mono);font-size:10px;border:1px solid var(--rule);border-radius:2px;padding:0 4px;color:var(--ink2);margin-right:3px}
+.searchin{padding:6px 9px;border:1px solid var(--rule);border-radius:2px;background:var(--card);width:190px}
+select.gsel{border:1px solid var(--rule2);border-radius:2px;padding:2px 4px;font-size:12px;background:var(--card)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.bar{margin:9px 0}.barhead{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;margin-bottom:3px}
+.track{position:relative;height:16px;background:var(--rule2);border-radius:1px}
+.fill{position:absolute;top:0;bottom:0;left:0;border-radius:1px}
+.marker{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
+.scrim{position:fixed;inset:0;background:rgba(19,27,25,.35);z-index:50}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(430px,100%);background:var(--paper);border-left:1px solid var(--rule);z-index:51;padding:18px;overflow:auto}
+.field{margin-bottom:13px}.field label{display:block;margin-bottom:4px}
+.field input,.field select{width:100%;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--card)}
+.row2{display:flex;gap:8px}
+.spick{display:flex;gap:4px;flex-wrap:wrap}
+.spick button{border:1px solid var(--rule);background:var(--card);border-radius:2px;padding:3px 8px;font-family:var(--mono);font-size:11px}
+.rank{font-family:var(--mono);font-size:10px;color:var(--ink3);width:18px;display:inline-block}
+@media(max-width:760px){.cols{grid-template-columns:1fr}.tl{--gut:112px}.tlab{font-size:10.5px;padding-left:8px}.bname{font-size:9.5px;padding-left:8px}}
+</style>
+<header>
+  <div class="hbar"><div><div class="eyebrow">City Loop Planner &middot; 11:00a&ndash;4:00p</div>
+  <h1>Raison d&rsquo;&Ecirc;tre <span>&mdash; day planner</span></h1></div>
+  <div class="hstats" id="hstats"></div></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-v="day" aria-selected="true">The day</button>
+    <button class="tab" role="tab" data-v="transit" aria-selected="false">Transit</button>
+    <button class="tab" role="tab" data-v="risk" aria-selected="false">What if</button>
+    <button class="tab" role="tab" data-v="arcs" aria-selected="false">Arcs &amp; targets</button>
+    <button class="tab" role="tab" data-v="guests" aria-selected="false">Guests</button>
+    <button class="tab" role="tab" data-v="metrics" aria-selected="false">Key Metrics</button>
+  </div>
+</header>
+<div class="wrap"><div id="view"></div></div>
+<div id="drawerHost"></div>
+<script>
+let GUESTS = [];
+const SENSES=["Taste","Scent","Touch","Sight","Sound","Space","Time","System"];
+const DISCIPLINES=["Architecture and spatial design","Art and creative practice","Culinary arts and gastronomy","Visual and web design","Entrepreneurship and business","Fashion and material culture","Film, photography, and media","Fragrance and beauty","Hospitality","Mathematics and quantitative research","Music and sound","Science and research","Technology and engineering","Writing, publishing, and editorial","Student or emerging practitioner"];
+const DIETARY_LABELS=["Vegetarian","Vegan","Gluten-free","Dairy-free","Halal","Kosher","No pork","No fish","No shellfish","Nut allergy","Egg allergy","Soy allergy"];
+// Split a comma-joined discipline string safely by matching against the known list,
+// so names like "Writing, publishing, and editorial" are never split mid-name.
+function parseDiscs(f){
+  if(!f)return[];
+  const out=[],sorted=DISCIPLINES.slice().sort((a,b)=>b.length-a.length);
+  let rem=f;
+  while(rem.length){
+    const m=sorted.find(d=>rem===d||rem.startsWith(d+','));
+    if(m){out.push(m);rem=rem.slice(m.length+(rem.length>m.length?1:0));}
+    else{// fallback: take up to next unambiguous comma
+      const i=rem.indexOf(',');if(i<0){out.push(rem.trim());break;}
+      out.push(rem.slice(0,i).trim());rem=rem.slice(i+1);}
+  }
+  return out.filter(Boolean);
+}
+const T0=660, T1=960; // the loop is 11a-4p, full stop
+const GUT=190;
+const hhmm=m=>{let h=Math.floor(m/60),x=m%60,hh=h%12||12;return hh+(x?':'+String(x).padStart(2,'0'):'')+(h>=12?'p':'a')};
+const pt=s=>{const m=/^(\d{1,2}):(\d{2})$/.exec(String(s).trim());return m?(+m[1])*60+(+m[2]):null};
+const ti=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const uid=()=>'s'+Math.random().toString(36).slice(2,8);
+const VPALETTE=['#2F62D9','#CC3A44','#0F8A7E','#D9741A','#7A45C4','#3D8A45','#B4157A','#C99A1E',
+  '#1F7A9E','#9C4221','#4A5FC1','#1C8C5E','#B33F6B','#5B6472','#8A5A2E','#2C9AA6','#6B3FA0','#A63C2E'];
+let _vmap=null;
+function venueColor(v){
+  if(!_vmap){ _vmap={}; let i=0;
+    plan.slots.forEach(s=>{ if(!(s.venue in _vmap)) _vmap[s.venue]=VPALETTE[i++%VPALETTE.length]; });
+    plan.joint && plan.joint.forEach(s=>{ if(s.venue&&!(s.venue in _vmap)) _vmap[s.venue]=VPALETTE[i++%VPALETTE.length]; });
+  }
+  if(!(v in _vmap)) _vmap[v]=VPALETTE[Object.keys(_vmap).length%VPALETTE.length];
+  return _vmap[v];
+}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const DEFAULT_LEG=15;
+const DEFAULT_MODES=['walk','train / bus','car'];
+const COST_TRAIN=3.00;   // $ per train / bus leg (NYC flat fare)
+const COST_CAR_BASE=3.00; // $ base fare per car leg
+const COST_CAR_PM=0.30;   // $ per minute for car
+const COST_CAR_MILE=1.70; // $ per mile for car (set miles on each leg in Transit tab)
+const legKey=(a,b)=>[a,b].sort().join(' \u2194 ');
+function leg(a,b){ if(a===b) return {mins:0,mode:'same',known:true};
+  const l=(plan.legs||{})[legKey(a,b)];
+  return l? {mins:l.mins,mode:l.mode,miles:l.miles||null,known:true} : {mins:DEFAULT_LEG,mode:modes()[0]||'walk',miles:null,known:false}; }
+function modes(){ return plan.modes && plan.modes.length ? plan.modes : DEFAULT_MODES; }
+function addMode(name){ name=(name||'').trim(); if(!name) return;
+  plan.modes = modes().slice(); if(!plan.modes.includes(name)) plan.modes.push(name);
+  save(); render(); }
+function removeMode(name){
+  if(usedLegs().some(l=>l.mode===name)){ alert('Reassign the legs using "'+name+'" before removing it.'); return; }
+  plan.modes = modes().filter(m=>m!==name); if(!plan.modes.length) plan.modes=DEFAULT_MODES.slice();
+  save(); render(); }
+function setLeg(a,b,f,v){ plan.legs=plan.legs||{}; const k=legKey(a,b);
+  const cur=plan.legs[k]||{mins:DEFAULT_LEG,mode:'walk'};
+  plan.legs[k]={mins:f==='mins'?(parseInt(v)||0):cur.mins, mode:f==='mode'?v:cur.mode, miles:f==='miles'?(parseFloat(v)||null):cur.miles||null};
+  save(); render(); }
+
+/* ---------- model: the day is a set of slots, not a set of lanes ---------- */
+function defaultPlan(){
+  return {slots:[],legs:{},gs:{},itin:{},modes:null};
+}
+let plan=defaultPlan();
+let planLocked=false; // lock mode: paths frozen, only guest-to-path assignment changes
+// Planning stages — controls which tools are visible and sets dashboard context
+const STAGES=[
+  {
+    id:'pre-eoi',
+    label:'Pre-EOI',
+    desc:'Partner planning with synthetic guests',
+    context:'You are in the early planning phase. Synthetic guests (SG1–SG60) stand in for real people so you can design and stress-test partner slots, timing, and route coverage before anyone has applied. Adjust the partner schedule, run the solver, and confirm that the program works across a range of 20–30 guests before opening expressions of interest.',
+  },
+  {
+    id:'invited',
+    label:'Invited',
+    desc:'Selecting and routing EOI applicants',
+    context:'Expressions of interest are in. Load the EOI CSV to replace synthetic guests with real applicants, matched to paths by sense fit. Use Select best to shortlist the strongest candidates from the pool, then re-plan to build their routes. You are deciding who gets an invitation and confirming the program can serve them well.',
+  },
+  {
+    id:'paid',
+    label:'Paid',
+    desc:'Final 25 confirmed — building real itineraries',
+    context:'Payment is confirmed. You have your 25 guests. This is the operational phase: lock the paths, verify each guest\'s route, and export the Itineraries JSON for the backend developer to load into each guest\'s private website page.',
+  },
+];
+let planStage='pre-eoi'; // default starting stage
+const KEY='raisondetre-day-v4';
+
+// ── Lock helpers ─────────────────────────────────────────────────────────────
+// When locked, plan.paths = {pid: [slotId,…]} (unique sequences, immutable)
+//              plan.guestPath = {gid: pid}     (the only thing that can change)
+// itin(g) in locked mode resolves via guestPath → paths → slotById.
+
+function pathSig(slotIds){
+  // Canonical signature for a sequence: slot ids sorted by slot start time
+  return slotIds.slice()
+    .map(id=>slotById(id)).filter(Boolean)
+    .sort((a,b)=>a.start-b.start)
+    .map(s=>s.id).join('>');
+}
+
+function lockPlan(){
+  // 1. Collect every guest's current itin and deduplicate into canonical paths
+  const sigMap={}; // sig → pid
+  const paths={};  // pid → [slotId,…] sorted by start time
+  let counter=0;
+  invited().forEach(g=>{
+    const ids=(plan.itin[g.id]||[]).filter(id=>slotById(id));
+    if(!ids.length)return;
+    const sorted=ids.slice().map(id=>slotById(id)).filter(Boolean)
+      .sort((a,b)=>a.start-b.start).map(s=>s.id);
+    const sig=sorted.join('>');
+    if(!sigMap[sig]){counter++;const pid='p'+counter;sigMap[sig]=pid;paths[pid]=sorted;}
+  });
+  // 2. Assign each invited guest to their path
+  const guestPath={};
+  invited().forEach(g=>{
+    const ids=(plan.itin[g.id]||[]).filter(id=>slotById(id));
+    if(!ids.length)return;
+    const sorted=ids.slice().map(id=>slotById(id)).filter(Boolean)
+      .sort((a,b)=>a.start-b.start).map(s=>s.id);
+    const sig=sorted.join('>');
+    guestPath[g.id]=sigMap[sig];
+  });
+  plan.paths=paths;
+  plan.guestPath=guestPath;
+  planLocked=true;
+  save();render();
+}
+
+function unlockPlan(){
+  // Rebuild itin from guestPath so the solver can re-use it
+  if(plan.paths&&plan.guestPath){
+    invited().forEach(g=>{
+      const pid=plan.guestPath[g.id];
+      if(pid&&plan.paths[pid]) plan.itin[g.id]=plan.paths[pid].slice();
+    });
+  }
+  planLocked=false;
+  save();render();
+}
+
+// Sorted paths list (P1 first)
+function pathList(){
+  if(!plan.paths)return[];
+  return Object.keys(plan.paths).sort((a,b)=>{
+    return parseInt(a.slice(1))-parseInt(b.slice(1));
+  }).map(pid=>({pid, slots:(plan.paths[pid]||[]).map(id=>slotById(id)).filter(Boolean).sort((a,b)=>a.start-b.start)}));
+}
+
+// Guests on a given path
+function guestsOnPath(pid){
+  if(!plan.guestPath)return[];
+  return invited().filter(g=>plan.guestPath[g.id]===pid);
+}
+
+// Swap two guests between paths — the only mutation allowed.
+// movingGid goes to targetLabel; whoever was on targetLabel comes to movingGid's old path.
+function assignGuestToPath(movingGid, targetLabel){
+  if(!targetLabel)return;
+  if(planLocked){
+    if(!plan.paths||!plan.paths[targetLabel])return;
+    plan.guestPath=plan.guestPath||{};
+    const oldLabel=plan.guestPath[movingGid]; // where moving guest currently is
+    // Find the guest(s) currently on targetLabel and move them to oldLabel
+    if(oldLabel&&oldLabel!==targetLabel){
+      invited().forEach(g=>{
+        if(g.id!==movingGid&&plan.guestPath[g.id]===targetLabel){
+          plan.guestPath[g.id]=oldLabel;
+          plan.itin[g.id]=(plan.paths[oldLabel]||[]).slice();
+        }
+      });
+    }
+    plan.guestPath[movingGid]=targetLabel;
+    plan.itin[movingGid]=(plan.paths[targetLabel]||[]).slice();
+  }else{
+    const {labelMap,pathSlots}=livePathMap();
+    const targetSlots=pathSlots[targetLabel];
+    if(!targetSlots)return;
+    const oldLabel=labelMap[movingGid];
+    const oldSlots=oldLabel?pathSlots[oldLabel]:null;
+    // Swap: any guest on targetLabel gets moved to movingGid's old path
+    if(oldSlots&&oldLabel!==targetLabel){
+      invited().forEach(g=>{
+        if(g.id!==movingGid&&labelMap[g.id]===targetLabel){
+          plan.itin[g.id]=oldSlots.slice();
+        }
+      });
+    }
+    plan.itin[movingGid]=targetSlots.slice();
+  }
+  save();render();
+}
+
+// Override itin() when locked: resolve via guestPath
+const _itinOrig=g=>(plan.itin[g.id]||[]).map(slotById).filter(Boolean).filter(s=>s.status!=='dropped').sort((a,b)=>a.start-b.start);
+function itin(g){
+  if(planLocked&&plan.guestPath&&plan.paths){
+    const pid=plan.guestPath[g.id];
+    if(pid&&plan.paths[pid]) return plan.paths[pid].map(id=>slotById(id)).filter(Boolean).filter(s=>s.status!=='dropped');
+    return [];
+  }
+  return _itinOrig(g);
+}
+async function save(){try{await window.storage.set(KEY,JSON.stringify({plan,guests:GUESTS}))}catch(e){}}
+async function load(){try{const r=await window.storage.get(KEY);if(r&&r.value){const d=JSON.parse(r.value);if(d.plan){plan=d.plan;if(Array.isArray(d.guests))GUESTS=d.guests;}else{plan=d;}}}catch(e){}}
+function gst(id){return plan.gs[id]||(plan.gs[id]={status:'pool'})}
+const invited=()=>GUESTS.filter(g=>gst(g.id).status==='invited');
+const interested=()=>GUESTS; // all guests regardless of planning status — used for arc/target analysis
+const live=()=>plan.slots.filter(s=>s.status!=='dropped');
+const slotById=id=>plan.slots.find(s=>s.id===id);
+// itin() is defined above in the lock-helpers block (supports both locked and unlocked modes)
+const capOf=s=>s.sizing==='all'?9999:(s.cap||(s.sizing==='capped'?0:9999));
+const headcount=s=>invited().filter(g=>(plan.itin[g.id]||[]).includes(s.id)).length;
+const W=s=>s.status==='confirmed'?1:.55;
+function coverage(g){const m={};itin(g).forEach(s=>(s.senses||[]).forEach(x=>{if(g.s.includes(x))m[x]=Math.max(m[x]||0,W(s))}));return m}
+const hitCount=g=>Object.keys(coverage(g)).length;
+const idleTime=g=>{let busy=0;itin(g).forEach(s=>busy+=s.end-s.start);return Math.max(0,(T1-T0)-busy-transitMin(g))};
+const moves=g=>Math.max(0,itin(g).length-1);
+// New CSV format uses pre-parsed accessLabels / dietLabels arrays.
+// Legacy synthetic data uses g.d (raw text) — both paths kept for compatibility.
+const notReady=g=>(g.regReady||'').trim().toLowerCase()==='no'; // Registration Readiness = No → solver handles last
+// Classification solve order: Priority (0) → Hash Table (1) → Partner Network (2) → General (3)
+const clsRank=g=>{const c=(g.cls||'').trim();
+  if(c==='Priority')return 0;if(c==='Hash Table')return 1;if(c==='Partner Network')return 2;return 3;};
+// Combined guest sort: classification tier → registration readiness → context-specific tiebreaker
+const guestSortKey=(a,b)=>{const cr=clsRank(a)-clsRank(b);if(cr)return cr;return(notReady(a)?1:0)-(notReady(b)?1:0);};
+const accessFlag=g=>g.accessLabels!=null?g.accessLabels.length>0:/cane|wheelchair|fatigue|step-free|elevator|low vision/i.test(g.d||'');
+const dietFlag=g=>g.dietLabels!=null?(g.dietLabels.length>0||!!(g.dietNotes&&g.dietNotes.trim())):/vegan|vegetarian|allerg|shellfish|dairy|lactose|nut/i.test(g.d||'');
+const wheelchairFlag=g=>g.accessLabels!=null?g.accessLabels.some(l=>/wheelchair|step-free|step free/i.test(l)):/wheelchair|step-free|step free/i.test(g.d||'');
+// food: explicit boolean on slot wins; falls back to isLunch or Taste-tagged
+const isFood=s=>s.food!=null?s.food:(s.isLunch||(s.senses||[]).includes('Taste'));
+function guestDietLabels(g){
+  if(g.dietLabels) return g.dietLabels; // new CSV format: labels already parsed
+  const t=g.d||'';if(!t)return [];const out=[];
+  if(/vegetarian/i.test(t))out.push('Vegetarian');
+  if(/vegan/i.test(t))out.push('Vegan');
+  if(/gluten/i.test(t))out.push('Gluten-free');
+  if(/dairy|lactose/i.test(t))out.push('Dairy-free');
+  if(/halal/i.test(t))out.push('Halal');
+  if(/kosher/i.test(t))out.push('Kosher');
+  if(/pork/i.test(t))out.push('No pork');
+  if(/\bfish\b|seafood/i.test(t))out.push('No fish');
+  if(/shellfish|scallop|shrimp|crab|lobster|clam|oyster|mussel|prawn/i.test(t))out.push('No shellfish');
+  if(/\bnut\b/i.test(t))out.push('Nut allergy');
+  if(/\begg\b/i.test(t))out.push('Egg allergy');
+  if(/\bsoy\b/i.test(t))out.push('Soy allergy');
+  return [...new Set(out)];
+}
+// green = confirmed, yellow = unverified (partner hasn't said yes or no), red = hard exclusion
+function dietMatch(g,s){
+  if(!isFood(s))return null;
+  const gl=guestDietLabels(g);if(!gl.length)return {status:'ok',labels:[]};
+  const red=gl.filter(l=>(s.cannotAccommodate||[]).includes(l));
+  if(red.length)return {status:'red',labels:red};
+  const yellow=gl.filter(l=>!(s.canAccommodate||[]).includes(l));
+  if(yellow.length)return {status:'yellow',labels:yellow};
+  return {status:'green',labels:gl};
+}
+// red = wheelchair guest, step-free confirmed No; yellow = wheelchair guest, step-free unknown
+function accessMatch(g,s){
+  if(!wheelchairFlag(g))return null;
+  if(s.stepFree==='no')return 'red';
+  if(!s.stepFree)return 'yellow';
+  return null;
+}
+const arcKey=g=>SENSES.filter(s=>g.s.includes(s)).join(' · ');
+
+function conflicts(s,list){
+  // a guest may attend at most one lunch stop
+  if(s.isLunch && list.some(x=>x.isLunch)) return true;
+  return list.some(x=>{
+    if(x.id===s.id) return true;
+    if(x.venue===s.venue) return true; // no guest visits the same partner twice
+    if(s.start<x.end && x.start<s.end) return true;
+    const gap = s.start>=x.end ? s.start-x.end : x.start-s.end;
+    return gap < leg(x.venue,s.venue).mins;
+  });
+}
+function legsOf(g){const it=itin(g),out=[];
+  for(let i=1;i<it.length;i++){const l=leg(it[i-1].venue,it[i].venue);
+    if(l.mins>0) out.push({from:it[i-1],to:it[i],...l});}
+  return out;}
+const transitMin=g=>legsOf(g).reduce((n,x)=>n+x.mins,0);
+const walkMin=g=>legsOf(g).filter(x=>x.mode==='walk').reduce((n,x)=>n+x.mins,0);
+function legCost(l){
+  if(l.mode==='walk') return 0;
+  if(l.mode==='car')  return +(COST_CAR_BASE + l.mins*COST_CAR_PM + (l.miles||0)*COST_CAR_MILE).toFixed(2);
+  return COST_TRAIN; // train / bus — flat ticket
+}
+const transitCost=g=>+legsOf(g).reduce((n,l)=>n+legCost(l),0).toFixed(2);
+const carLegs=g=>legsOf(g).filter(l=>l.mode==='car');
+const trainLegs=g=>legsOf(g).filter(l=>l.mode!=='walk'&&l.mode!=='car');
+const BUDGET_CAP=50; // max total per guest across all partner stops + transit
+const slotCost=(s)=>+(s.cost||0);  // per-guest cost set by organiser for this partner stop
+const venueCost=g=>itin(g).reduce((n,s)=>n+slotCost(s),0); // sum of all partner stop costs
+const totalEventCost=g=>+venueCost(g).toFixed(2); // partner stop costs only (not transit)
+const overBudget=g=>totalEventCost(g)>BUDGET_CAP;
+function assumedLegs(){const out={};invited().forEach(g=>legsOf(g).forEach(l=>{
+    if(!l.known) out[legKey(l.from.venue,l.to.venue)]=[l.from.venue,l.to.venue];}));
+  return Object.values(out);}
+function usedLegs(){const m={};invited().forEach(g=>legsOf(g).forEach(l=>{
+    const k=legKey(l.from.venue,l.to.venue);
+    (m[k]=m[k]||{k,a:l.from.venue,b:l.to.venue,n:0,tight:0,...leg(l.from.venue,l.to.venue)});
+    m[k].n++; if(l.to.start-l.from.end < l.mins) m[k].tight++;}));
+  return Object.values(m).sort((x,y)=>y.n-x.n);}
+function gain(g,s,cov){
+  let v=0;
+  (s.senses||[]).forEach(x=>{if(g.s.includes(x)) v+=Math.max(0,W(s)-(cov[x]||0))});
+  // discipline resonance: soft bonus when guest's field aligns with the partner's focus
+  if(s.disciplines&&s.disciplines.length){
+    const gDiscs=parseDiscs(g.f);
+    const matches=s.disciplines.filter(d=>gDiscs.includes(d)).length;
+    v+=0.08*matches; // 0.08 per matching discipline — meaningful but doesn't override senses
+  }
+  return v;
+}
+// gender constraint: slot.gender null/undefined = open to all; 'Woman'/'Man' = restricted
+const genderMatch=(g,s)=>!s.gender||s.gender===g.p;
+function objective(){
+  let v=0;
+  invited().forEach(g=>{const c=coverage(g);
+    SENSES.forEach(x=>v+=(c[x]||0));
+    // discipline resonance in objective so localSearch also optimises for it
+    itin(g).forEach(s=>{
+      if(s.disciplines&&s.disciplines.length){
+        const gDiscs=parseDiscs(g.f);
+        v+=0.08*s.disciplines.filter(d=>gDiscs.includes(d)).length;
+      }
+    });
+    const L=legsOf(g);
+    v-=0.006*transitMin(g)+0.02*L.length;
+    if(accessFlag(g)) v-=0.012*walkMin(g)+0.05*L.length;
+    v-=0.015*transitCost(g); // cost equity: walk=$0 < train=$3 < car=$3 base+$0.30/min+$1.70/mi
+    v-=0.0015*idleTime(g);
+  });
+  // hard penalty for every empty seat in a capped slot — local search must not vacate reservations
+  live().filter(s=>s.sizing==='capped'&&capOf(s)>0).forEach(s=>{
+    v-=0.4*Math.max(0,capOf(s)-headcount(s));
+  });
+  return v;
+}
+
+/* ---------- solver ---------- */
+// Seeded shuffle: deterministic per seed, randomises within equal-rank groups.
+// jitter=0 → pure deterministic; jitter=1 → full random within tier.
+let _solverSeed=Date.now()>>>0;
+function _rng(){_solverSeed^=_solverSeed<<13;_solverSeed>>>=0;_solverSeed^=_solverSeed>>17;_solverSeed^=_solverSeed<<5;_solverSeed>>>=0;return _solverSeed/4294967296}
+function _shuffleWithin(arr,keyFn){
+  // stable-sort by key, then Fisher-Yates shuffle within each equal-key run
+  arr.sort((a,b)=>keyFn(a)-keyFn(b));
+  let i=0;
+  while(i<arr.length){
+    let j=i;const k=keyFn(arr[i]);
+    while(j<arr.length&&keyFn(arr[j])===k)j++;
+    for(let x=j-1;x>i;x--){const r=i+Math.floor(_rng()*(x-i+1));[arr[x],arr[r]]=[arr[r],arr[x]];}
+    i=j;
+  }
+  return arr;
+}
+function tionti(guestList){
+  // Accept an explicit guest list (e.g. paid-only) or fall back to whoever is planning-invited
+  const gs=guestList||invited();
+  plan.itin={}; const load={};
+  live().forEach(s=>load[s.id]=0);
+  // initialise every guest's itinerary array
+  gs.forEach(g=>{plan.itin[g.id]=[]});
+  // everyone-slots are non-negotiable and uncapped
+  const all=live().filter(s=>s.sizing==='all');
+  gs.forEach(g=>{plan.itin[g.id]=all.map(s=>s.id)});
+
+  // ── PHASE 1: hard-capped slots are confirmed reservations ──────────────────
+  // Fill them slot-first, completely, before any other assignment runs.
+  // Sorted tightest cap first so the hardest-to-fill reservations get first pick.
+  live().filter(s=>s.sizing==='capped')
+    .sort((a,b)=>capOf(a)-capOf(b))
+    .forEach(s=>{
+      const eligible=gs.filter(g=>
+        !(plan.itin[g.id]||[]).includes(s.id)&&
+        !conflicts(s,itin(g))&&
+        genderMatch(g,s)
+      );
+      // Shuffle within each classification tier so groupings vary each run
+      _shuffleWithin(eligible, g=>clsRank(g)*2+(notReady(g)?1:0));
+      // Within each shuffled tier, still prefer higher sense gain
+      eligible.sort((a,b)=>{
+        const base=clsRank(a)*2+(notReady(a)?1:0)-(clsRank(b)*2+(notReady(b)?1:0));if(base)return base;
+        const ag=gain(a,s,coverage(a)),bg=gain(b,s,coverage(b));
+        return ag!==bg ? bg-ag : 0; // tie on gain → keep shuffled order
+      });
+      for(const g of eligible){
+        if(load[s.id]>=capOf(s))break;
+        plan.itin[g.id].push(s.id);load[s.id]++;
+      }
+    });
+
+  // ── PHASE 2: greedy sense-coverage pass for flex/remaining slots ───────────
+  // Sort order: classification tier → notReady → arc difficulty (hardest first within tier).
+  // Priority + Hash Table guests are non-negotiable and run before Partner Network and General.
+  const reach=g=>g.s.filter(x=>live().some(s=>(s.senses||[]).includes(x))).length/g.s.length;
+  const order=_shuffleWithin(gs.slice(), g=>clsRank(g)*2+(notReady(g)?1:0));
+  order.sort((a,b)=>{
+    const base=clsRank(a)*2+(notReady(a)?1:0)-(clsRank(b)*2+(notReady(b)?1:0));if(base)return base;
+    return reach(a)-reach(b); // hardest arc first within tier, then shuffled order preserved
+  });
+  order.forEach(g=>{
+    for(let k=0;k<5;k++){
+      const cur=itin(g), cov=coverage(g);
+      let best=null,bv=0;
+      live().forEach(s=>{
+        if(s.sizing==='all')return;
+        if(load[s.id]>=capOf(s))return;
+        if(conflicts(s,cur))return;
+        if(!genderMatch(g,s))return;
+        const near=cur.length?Math.min(...cur.map(x=>leg(x.venue,s.venue).mins)):0;
+        const nearLeg=cur.length?cur.map(x=>leg(x.venue,s.venue)).reduce((a,b)=>a.mins<b.mins?a:b,{mins:9999,mode:'walk'}):{mins:0,mode:'walk'};
+        const v=gain(g,s,cov) - 0.02 - 0.006*near - 0.015*legCost(nearLeg) - (accessFlag(g)?0.06:0);
+        if(v>bv){bv=v;best=s}
+      });
+      if(!best)break;
+      plan.itin[g.id].push(best.id);load[best.id]++;
+    }
+  });
+
+  // ── safety net: top up any capped slot still short after Phase 1+2 ─────────
+  const capFill=()=>{
+    live().filter(s=>s.sizing==='capped'&&load[s.id]<capOf(s))
+      .sort((a,b)=>load[a.id]/Math.max(1,capOf(a))-load[b.id]/Math.max(1,capOf(b)))
+      .forEach(s=>{
+        const eligible=gs.filter(g=>!(plan.itin[g.id]||[]).includes(s.id)&&!conflicts(s,itin(g))&&genderMatch(g,s));
+        eligible.sort((a,b)=>{
+          const base=guestSortKey(a,b);if(base)return base;
+          return idleTime(b)-idleTime(a);
+        });
+        for(const g of eligible){if(load[s.id]>=capOf(s))break;plan.itin[g.id].push(s.id);load[s.id]++;}
+      });
+  };
+  capFill();
+
+  // fill idle windows with anything that has room to avoid dead time
+  // classification tier → notReady determines fill order
+  const fillOrder=gs.slice().sort(guestSortKey);
+  fillOrder.forEach(g=>{
+    live().forEach(s=>{
+      if(s.sizing==='all'||load[s.id]>=capOf(s))return;
+      if(conflicts(s,itin(g)))return;
+      if(!genderMatch(g,s))return;
+      if(gain(g,s,coverage(g))>0||idleTime(g)>90){plan.itin[g.id].push(s.id);load[s.id]++}
+    });
+  });
+  localSearch(load,4000);
+  capFill(); // final pass — local search must not leave capped seats empty
+  save();render();
+}
+function localSearch(load,iters){
+  const gs=invited();if(!gs.length)return;
+  let cur=objective();
+  for(let i=0;i<iters;i++){
+    const g=gs[Math.floor(Math.random()*gs.length)];
+    const mine=plan.itin[g.id]||[];
+    const drop=Math.random()<.5&&mine.length>1;
+    const before=mine.slice();
+    if(drop){const j=Math.floor(Math.random()*mine.length);const s=slotById(mine[j]);
+      if(!s||s.sizing==='all')continue; mine.splice(j,1); load[s.id]--;}
+    const pool=live().filter(s=>s.sizing!=='all'&&load[s.id]<capOf(s)&&!mine.includes(s.id)&&!conflicts(s,itin(g))&&genderMatch(g,s));
+    if(pool.length){const s=pool[Math.floor(Math.random()*pool.length)];mine.push(s.id);load[s.id]++}
+    const now=objective();
+    if(now<cur-1e-9){ // revert
+      mine.forEach(id=>{if(!before.includes(id))load[id]--});
+      before.forEach(id=>{if(!mine.includes(id))load[id]++});
+      plan.itin[g.id]=before;
+    } else cur=now;
+  }
+}
+function seedSample(n){
+  let s=20260820>>>0;const rnd=()=>{s^=s<<13;s>>>=0;s^=s>>17;s^=s<<5;s>>>=0;return s/4294967296};
+  const pool=GUESTS.filter(g=>g.st==='invited').slice();
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  GUESTS.forEach(g=>gst(g.id).status='pool');
+  pool.slice(0,n).forEach(g=>gst(g.id).status='invited');
+}
+function sampleAllPaid(){
+  // Reset everyone, mark only paid guests as planning-invited, then plan for
+  // exactly those 25 paid guests — pass the list directly so there is no ambiguity
+  GUESTS.forEach(g=>gst(g.id).status='pool');
+  const paid=GUESTS.filter(g=>g.st==='paid');
+  paid.forEach(g=>gst(g.id).status='invited');
+  tionti(paid); // slot-first: capped reservations fill before flex slots
+}
+function sampleAllInterested(){
+  GUESTS.forEach(g=>gst(g.id).status='invited');
+}
+let inviteTarget=25;
+function selectTop(n){
+  n=Math.max(1,n||inviteTarget);
+  // Arc potential: fraction of this guest's senses the current venue program can deliver
+  const reach=g=>g.s.filter(x=>live().some(s=>(s.senses||[]).includes(x))).length/Math.max(1,g.s.length);
+
+  // Priority (0) and Hash Table (1) guests are non-negotiable — always included first
+  const mustHave=GUESTS.filter(g=>clsRank(g)<=1);
+  // Partner Network and General compete for remaining seats
+  const fillable=GUESTS.filter(g=>clsRank(g)>1).sort((a,b)=>{
+    const base=guestSortKey(a,b);if(base)return base; // tier → readiness
+    return reach(b)-reach(a); // higher program-fit first within tier
+  });
+  const remaining=Math.max(0,n-mustHave.length);
+  const selected=[...mustHave,...fillable.slice(0,remaining)];
+
+  GUESTS.forEach(g=>gst(g.id).status='pool');
+  selected.forEach(g=>gst(g.id).status='invited');
+  tionti(selected); // plan for exactly these guests
+}
+function fitWindow(){plan.slots.forEach(s=>{s.start=Math.max(T0,s.start);s.end=Math.min(T1,s.end)})}
+const X=m=>((m-T0)/(T1-T0))*100;
+
+/* ---------- header ---------- */
+function renderHead(){
+  const inv=invited();
+  const avg=inv.length?(inv.reduce((n,g)=>n+hitCount(g)/g.s.length,0)/inv.length*100).toFixed(0)+'%':'—';
+  const zero=inv.filter(g=>hitCount(g)===0).length;
+  const over=live().filter(s=>headcount(s)>capOf(s)).length;
+  const tent=plan.slots.filter(s=>s.status==='tentative').length;
+  const overBgt=inv.filter(g=>overBudget(g)).length;
+  const confirmedSlots=plan.slots.filter(s=>s.status==='confirmed').length;
+  hstats.innerHTML=[['Guests',inv.length],['Sense coverage',avg],['No sense match',zero],
+    ['Over cap',over],['Slots confirmed',confirmedSlots+' / '+plan.slots.length],['Transit gaps',assumedLegs().length],
+    ['Over $'+BUDGET_CAP,overBgt?`<span style="color:#c0392b">${overBgt}</span>`:overBgt===0&&inv.every(g=>totalEventCost(g)===0)?'<span style="color:var(--ink3);font-size:11px">all free</span>':'0']]
+    .map(([k,v],i)=>`<div class="stat" style="cursor:pointer" title="View in Key Metrics" onclick="tab='metrics';_metricsSection='${['guests','sense-coverage','sense-coverage','capacity','slots','transit','budget'][i]}';render();document.getElementById('ms-${['guests','sense-coverage','sense-coverage','capacity','slots','transit','budget'][i]}')?.scrollIntoView({behavior:'smooth'})"><div class="eyebrow">${k}</div><b>${v}</b></div>`).join('');
+}
+
+/* ---------- the day ---------- */
+function venueRows(){
+  const order=[];plan.slots.forEach(s=>{if(!order.includes(s.venue))order.push(s.venue)});
+  return order.map(v=>({venue:v,slots:plan.slots.filter(s=>s.venue===v)}));
+}
+function ticks(){let h='';
+  for(let m=T0;m<=T1;m+=30){const e=m===T0||m===T1;
+    h+=`<div class="vline${e?' edge':''}" style="left:${X(m)}%"></div>`;}
+  return `<div class="gridwrap">${h}</div>`}
+function axis(){let h='';
+  for(let m=T0;m<=T1;m+=30){const e=m===T0||m===T1;
+    h+=`<div class="tick${e?' edge':''}" style="left:${X(m)}%;transform:${m===T0?'translateX(0)':m===T1?'translateX(-100%)':'translateX(-50%)'}">${m%60===0?hhmm(m):''}</div>`;}
+  return h+`<div class="cap" style="left:0"></div><div class="cap" style="left:100%"></div>`;}
+function slotChip(s){
+  const n=headcount(s),cap=capOf(s),over=n>cap;
+  const cls=[ 'slot', s.status==='tentative'?'tent':'', s.status==='dropped'?'dropped':'', s.sizing==='all'?'all':'', over?'over':''].join(' ');
+  const size=s.sizing==='all'?'all':(s.sizing==='flex'?(s.cap?n+'/~'+s.cap:n+' flex'):n+'/'+cap);
+  const genderLabel=s.gender?`<span style="font-family:var(--mono);font-size:9px;opacity:.7;margin-left:2px">${s.gender==='Woman'?'W':'M'}</span>`:'';
+  const dCount=(s.disciplines||[]).length;
+  const discLabel=dCount?`<span title="${(s.disciplines||[]).join(', ')}" style="font-family:var(--mono);font-size:9px;opacity:.65;margin-left:2px">${dCount}d</span>`:'';
+  const lunchLabel=s.isLunch?`<span style="font-family:var(--mono);font-size:9px;background:#fff3cd;color:#7a5800;border-radius:2px;padding:0 3px;margin-left:2px">lunch</span>`:'';
+  return `<button class="${cls}" style="left:${X(s.start)}%;width:calc(${X(s.end)-X(s.start)}% - 3px)${planLocked?';cursor:default':''}" onclick="${planLocked?'':("editSlot('"+s.id+"')")}">
+    ${(s.senses||[]).map(x=>`<span class="dot" style="background:var(--${x})" title="${x}"></span>`).join('')}
+    <span>${hhmm(s.start)}</span>${genderLabel}${discLabel}${lunchLabel}<span class="cnt">${size}</span></button>`;
+}
+let braidFilter='invited';
+let unsetPairsOpen=false;
+function braidGuests(){
+  if(braidFilter==='all') return GUESTS.slice();
+  if(braidFilter==='paid') return GUESTS.filter(g=>g.st==='paid');
+  return invited(); // default: whoever is in the active planning cohort
+}
+// Compute a live sig→pathLabel map from current itins (works pre- and post-lock)
+function livePathMap(){
+  const sigMap={},labelMap={};let counter=0;
+  // Use invited() sorted by guest id for stable numbering
+  invited().slice().sort((a,b)=>a.id.localeCompare(b.id)).forEach(g=>{
+    const ids=(plan.itin[g.id]||[]).map(id=>slotById(id)).filter(Boolean)
+      .filter(s=>s.status!=='dropped').sort((a,b)=>a.start-b.start).map(s=>s.id);
+    if(!ids.length)return;
+    const sig=ids.join('>');
+    if(!sigMap[sig]){counter++;sigMap[sig]='P'+counter;}
+    labelMap[g.id]=sigMap[sig];
+  });
+  // Reverse: pathLabel → sorted slot ids
+  const pathSlots={};
+  Object.entries(sigMap).forEach(([sig,label])=>{pathSlots[label]=sig.split('>')});
+  return {labelMap,pathSlots};
+}
+
+function braidRows(){
+  const inv=braidGuests().slice();
+  const {labelMap}=livePathMap();
+  // Sort by path number then guest name within group
+  inv.sort((a,b)=>{
+    const pa=parseInt((labelMap[a.id]||'P999').slice(1));
+    const pb=parseInt((labelMap[b.id]||'P999').slice(1));
+    return pa-pb||a.n.localeCompare(b.n);
+  });
+  let lastPath=null;
+  const out=[];
+  inv.forEach(g=>{
+    const it=itin(g);
+    const pathLabel=labelMap[g.id]||'';
+    // Thin separator rule between path groups
+    if(pathLabel&&pathLabel!==lastPath&&lastPath!==null){
+      out.push(`<div style="height:1px;background:var(--rule2);margin:1px 0"></div>`);
+    }
+    lastPath=pathLabel||lastPath;
+    let h=`<div class="idle" style="left:0;right:0"></div>`;
+    legsOf(g).forEach(l=>{const a=l.from.end,b=Math.min(l.to.start,a+l.mins);
+      h+=`<div class="leg${l.known?'':' guess'}" title="${esc(l.from.venue)} → ${esc(l.to.venue)}: ${l.mins} min ${l.mode}${l.known?'':' (assumed)'}" style="left:${X(a)}%;width:${X(b)-X(a)}%">${l.mode[0].toUpperCase()}</div>`});
+    it.forEach(s=>{
+      h+=`<div class="seg" title="${esc(s.venue)} ${hhmm(s.start)}–${hhmm(s.end)}" style="left:${X(s.start)}%;width:calc(${X(s.end)-X(s.start)}% - 2px);background:${venueColor(s.venue)}">${esc(s.venue.slice(0,2).toUpperCase())}</div>`});
+    // Name label: "P3 · SG12" on one line
+    const nameHtml=pathLabel
+      ?`<span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink3)">${pathLabel}</span> <span style="font-size:11px">${esc(g.n)}</span>`
+      :`<span style="font-size:11px">${esc(g.n)}</span>`;
+    out.push(`<div class="brow"><div class="bname">${nameHtml}</div><div class="ttrack">${h}</div></div>`);
+  });
+  return out.join('');
+}
+
+/* ---------- path braid (locked mode) ---------- */
+function pathBraidRows(){
+  const paths=pathList();
+  if(!paths.length)return '<p class="note" style="padding:10px 0">No paths. Lock the plan after running the solver.</p>';
+  const allPids=paths.map(p=>p.pid);
+
+  // Render each path as a timeline row + guest chips below it
+  const rowHeight=34, chipAreaHeight=38;
+  const totalH=(rowHeight+chipAreaHeight)*paths.length;
+
+  // Build the braid
+  let braids='';
+  paths.forEach(({pid,slots})=>{
+    // timeline row
+    let h=`<div class="idle" style="left:0;right:0"></div>`;
+    // transit legs between stops on this path
+    for(let i=1;i<slots.length;i++){
+      const l=leg(slots[i-1].venue,slots[i].venue);
+      const a=slots[i-1].end, b=Math.min(slots[i].start,a+l.mins);
+      if(b>a) h+=`<div class="leg${l.known?'':' guess'}" title="${esc(slots[i-1].venue)} → ${esc(slots[i].venue)}: ${l.mins}m ${l.mode}" style="left:${X(a)}%;width:${X(b)-X(a)}%">${l.mode[0].toUpperCase()}</div>`;
+    }
+    slots.forEach(s=>{
+      h+=`<div class="seg" title="${esc(s.venue)} ${hhmm(s.start)}–${hhmm(s.end)}" style="left:${X(s.start)}%;width:calc(${X(s.end)-X(s.start)}% - 2px);background:${venueColor(s.venue)}">${esc(s.venue.slice(0,2).toUpperCase())}</div>`;
+    });
+    // guest chips with reassign dropdown
+    const gs=guestsOnPath(pid);
+    const chips=gs.map(g=>{
+      const otherPids=allPids.filter(p=>p!==pid);
+      const opts=otherPids.map(p=>`<option value="${p}">${p.toUpperCase()}</option>`).join('');
+      return `<span style="display:inline-flex;align-items:center;gap:3px;background:#fff;border:1px solid var(--rule);border-radius:2px;padding:2px 4px 2px 7px;font-size:11px;white-space:nowrap;margin:2px">
+        <span style="font-weight:500">${esc(g.n)}</span>
+        <select title="Move ${esc(g.n)} to a different path" style="border:0;background:transparent;font-family:var(--mono);font-size:10px;color:var(--ink2);cursor:pointer;padding:0 2px" onchange="assignGuestToPath('${g.id}',this.value);this.selectedIndex=0">
+          <option value="">move to…</option>${opts}
+        </select>
+      </span>`;
+    }).join('');
+
+    braids+=`<div style="border-bottom:1px solid var(--rule2);padding-bottom:4px;margin-bottom:2px">
+      <div class="brow" style="height:${rowHeight}px">
+        <div class="bname" style="font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink)">${pid.toUpperCase()} <span style="font-weight:400;color:var(--ink3)">${gs.length} guest${gs.length===1?'':'s'}</span></div>
+        <div class="ttrack">${h}</div>
+      </div>
+      <div style="padding-left:var(--gut);min-height:28px;display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding-bottom:6px">${chips||'<span class="gsub" style="font-size:11px;padding-left:2px">no guests assigned</span>'}</div>
+    </div>`;
+  });
+
+  // Guests with no path assigned yet
+  const unassigned=invited().filter(g=>!plan.guestPath||!plan.guestPath[g.id]);
+  const unassignedSection=unassigned.length?`<div style="margin-top:16px">
+    <div class="eyebrow" style="color:#b85c00;margin-bottom:6px">Unassigned guests (${unassigned.length})</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px">${unassigned.map(g=>{
+      const opts=allPids.map(p=>`<option value="${p}">${p.toUpperCase()}</option>`).join('');
+      return `<span style="display:inline-flex;align-items:center;gap:3px;background:#fff5eb;border:1px solid #f0c070;border-radius:2px;padding:2px 4px 2px 7px;font-size:11px;white-space:nowrap">
+        <span style="font-weight:500">${esc(g.n)}</span>
+        <select title="Assign ${esc(g.n)} to a path" style="border:0;background:transparent;font-family:var(--mono);font-size:10px;color:#b85c00;cursor:pointer;padding:0 2px" onchange="assignGuestToPath('${g.id}',this.value);this.selectedIndex=0">
+          <option value="">assign to…</option>${opts}
+        </select>
+      </span>`;
+    }).join('')}</div>
+  </div>`:'';
+
+  return `<div class="scroller"><div class="tl" style="padding:8px 0;--gut:120px">
+    <div class="axis">${axis()}</div>${ticks()}
+    <div style="position:relative">${braids}</div>
+  </div></div>${unassignedSection}`;
+}
+
+function tb(label,content){
+  return '<div style="display:flex;flex-direction:column;border-right:1px solid var(--rule)"><div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:5px 10px 3px;border-bottom:1px solid var(--rule)">'+label+'</div><div style="display:flex;gap:4px;padding:6px 8px;align-items:center">'+content+'</div></div>';
+}
+function numIn(val,cb,title){
+  return '<input type="number" min="1" max="999" step="1" value="'+val+'" oninput="'+cb+'" style="width:48px;font-family:var(--mono);font-size:13px;padding:3px 5px;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink);text-align:center" title="'+title+'">';
+}
+function dayToolbarSections(){
+  if(planLocked){
+    return tb('Assign','<span style="font-size:12px;color:var(--ink2)">'+pathList().length+' paths locked &middot; move guests in the braid or Guests tab</span>');
+  }
+  const shuffleBtn='<button class="btn" title="Re-run the solver with a new random seed. Same constraints, different groupings." onclick="newSolverSeed();tionti()">Shuffle</button>';
+  const planSec=tb('Plan','<button class="btn solid" title="Pull every interested guest into the plan and run the solver to build their routes" onclick="sampleAllInterested();tionti()">All guests</button><button class="btn" title="Re-run the solver with the current guest list. Tightens routes and fixes any unseated guests." onclick="tionti()">Re-plan</button>'+shuffleBtn);
+  const schedSec=tb('Schedule','<button class="btn" title="Add a new partner venue slot to the day timeline" onclick="addSlot()">Add slot</button><button class="btn" title="Find the best available time window for a new slot given guest availability and sense targets" onclick="openFitSlot()">Find window</button>');
+  const numField=numIn(inviteTarget,'inviteTarget=Math.max(1,parseInt(this.value)||25)','How many guests to plan for. Used by Select best.');
+  if(planStage==='pre-eoi'){
+    return planSec+schedSec+tb('Guest range',numField+'<button class="btn" title="Score all synthetic guests by sense fit and select the best N to plan routes for" onclick="selectTop(inviteTarget)">Select best</button>');
+  }
+  if(planStage==='invited'){
+    const poolN=GUESTS.filter(g=>g.st==='requested'||g.st==='interested').length;
+    return tb('Applicants','<button class="btn solid" title="Load your EOI spreadsheet. Real applicants will be matched to paths by sense fit and replace the synthetic placeholders." onclick="document.getElementById(\'loadGuestInput\').click()">Load EOI CSV</button><span style="font-size:11px;color:var(--ink3)">'+poolN+' in pool</span>')+
+      tb('Select',numField+'<button class="btn" title="Score all applicants by sense fit, registration readiness, and classification tier. Select the best N and invite them." onclick="selectTop(inviteTarget)">Select best</button><button class="btn" title="Re-run the solver for the current invited guest list" onclick="tionti()">Re-plan</button>');
+  }
+  if(planStage==='paid'){
+    const paidN=GUESTS.filter(g=>g.st==='paid').length;
+    return tb('Final 25','<button class="btn solid" title="Switch to only guests who have paid. These are your confirmed 25." onclick="sampleAllPaid();tionti()">All paid guests</button><button class="btn" title="Re-run the solver for confirmed paid guests" onclick="tionti()">Re-plan</button><span style="font-size:11px;color:var(--ink3)">'+paidN+' confirmed</span>')+
+      tb('Lock paths','<button class="btn" style="border-color:#1F7A4D;color:#1F7A4D" title="Freeze all route sequences as named paths (P1, P2...). Slot editing and the solver are disabled. The only remaining action is moving guests between paths, then exporting." onclick="if(confirm(\'Lock the paths? Slot editing and solver will be disabled. You can only move guests between paths.\')){lockPlan();render()}">Lock &amp; assign</button>');
+  }
+  return '';
+}
+function newSolverSeed(){_solverSeed=Date.now()>>>0;}
+function switchStage(id){
+  if(planLocked){
+    if(!confirm('Switching stage will unlock the paths and return to planning mode. Continue?'))return;
+    unlockPlan();
+  }
+  planStage=id;
+  render();
+}
+function viewDay(){
+  const rows=venueRows().map(r=>`<div class="trow"><div class="tlab">${esc(r.venue)}</div><div class="ttrack">${r.slots.map(slotChip).join('')}</div></div>`).join('');
+  const unseated=invited().filter(g=>itin(g).length<=1).length;
+  // Stage selector + context banner
+  const activeStage=STAGES.find(s=>s.id===planStage)||STAGES[0];
+  const stageBar=`<div style="display:flex;align-items:stretch;border:1px solid var(--rule);border-radius:4px 4px 0 0;overflow:hidden">
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:0 12px;display:flex;align-items:center;border-right:1px solid var(--rule);white-space:nowrap;background:var(--paper2,#f7f7f5)">Stage</div>
+    ${STAGES.map(st=>{
+      const active=planStage===st.id&&!planLocked;
+      return `<button title="${st.desc}" style="flex:1;border:none;border-right:1px solid var(--rule);padding:7px 16px;font-family:var(--mono);font-size:10px;letter-spacing:.04em;cursor:pointer;background:${active?'var(--ink)':'var(--paper2,#f7f7f5)'};color:${active?'var(--paper)':'var(--ink2)'};transition:background .15s" onclick="switchStage('${st.id}')">${st.label}</button>`;
+    }).join('')}
+    ${planLocked?`<div style="padding:0 14px;display:flex;align-items:center;gap:8px;background:#131B19;color:#9ab;font-family:var(--mono);font-size:10px;white-space:nowrap;margin-left:auto">
+      <span style="color:#E9EDEC;font-weight:600">Paths locked</span>
+      <button style="border:1px solid #9ab;background:transparent;color:#9ab;border-radius:3px;padding:2px 8px;font-size:10px;cursor:pointer" title="Return to planning mode. Locked paths will be discarded and the solver becomes available again." onclick="if(confirm('Unlock? This returns to full planning mode. Locked paths will be discarded.')){unlockPlan();planStage='paid';render()}">Unlock</button>
+    </div>`:''}
+  </div>
+  <div style="border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 14px;margin-bottom:10px;background:var(--paper2,#f7f7f5)">
+    <div style="font-size:12px;color:var(--ink2);line-height:1.6;max-width:860px">${planLocked?'Paths are locked. The stop sequences are frozen. Use the path braid below or the Guests tab to move a guest from one path to another. When assignments are ready, export the Itineraries JSON from the Guests tab.':esc(activeStage.context)}</div>
+  </div>`;
+  return stageBar+`<div style="display:flex;flex-wrap:wrap;gap:0;align-items:stretch;border:1px solid var(--rule);border-radius:4px;margin-bottom:10px;overflow:hidden">
+    ${dayToolbarSections()}
+    <div style="display:flex;flex-direction:column;border-right:1px solid var(--rule)">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:5px 10px 3px;border-bottom:1px solid var(--rule)">File</div>
+      <div style="display:flex;gap:4px;padding:6px 8px;align-items:center">
+        <button class="btn green" title="Download the full plan as a JSON file so you can reload it later" onclick="exportPlan()">Save</button>
+        <button class="btn" title="Load a previously saved plan JSON file. Replaces everything on screen." onclick="document.getElementById('loadPlanInput').click()">Load plan</button>
+        <input type="file" id="loadPlanInput" accept="application/json" style="display:none" onchange="importPlan(this.files[0])">
+        ${!planLocked?`<button class="btn" title="Load your guest spreadsheet (EOI CSV). Real guests are matched to existing paths by sense fit and replace the synthetic placeholders." onclick="document.getElementById('loadGuestInput').click()">Load guests CSV</button>`:''}
+        <input type="file" id="loadGuestInput" accept=".csv,text/csv" style="display:none" onchange="loadGuestCSV(this.files[0])">
+      </div>
+    </div>
+  </div>
+  <p class="note" style="margin-bottom:12px">${planLocked?'Paths are locked. Use the rows below or the Guests tab to move a guest from one path to another. The stop sequences themselves cannot change.':'Each row is a partner venue. Each colored bar is a time slot — when it opens, how long, and how many guests it holds. Click any bar to edit its details.'}</p>
+  <div class="scroller"><div class="tl">
+    <div class="axis">${axis()}</div>${ticks()}${rows}</div></div>
+  <div class="legend">
+    <span class="eyebrow">solid = confirmed</span><span class="eyebrow">dashed = tentative</span>
+    <span class="eyebrow">struck = dropped</span><span class="eyebrow">double rule = everyone</span>
+    <span class="eyebrow">hatched = over capacity</span></div>
+  <div style="display:flex;align-items:baseline;gap:12px;margin:30px 0 4px;flex-wrap:wrap">
+    <h2 style="margin:0">${planLocked?'Paths':'Where everyone actually is'}</h2>
+    ${!planLocked?`<div style="display:flex;gap:2px">${[
+      ['invited','Invited'],
+      ['all','All interested'],
+      ['paid','Paid only'],
+    ].map(([k,l])=>{
+      const n=k==='all'?GUESTS.length:k==='paid'?GUESTS.filter(g=>g.st==='paid').length:invited().length;
+      return `<button class="btn sm" style="${braidFilter===k?'background:var(--ink);color:var(--paper);border-color:var(--ink)':''}" onclick="braidFilter='${k}';render()">${l} · ${n}</button>`;
+    }).join('')}</div>`:''}
+  </div>
+  <p class="note" style="margin-bottom:10px">${planLocked
+    ?'Each row is a unique path. The stops are fixed. Move a guest to a different path using the dropdown on their chip.'
+    :'One line per guest, sorted so people moving together sit together. Each block is colored by venue — wide bands are convergence points, fanning out is the split. Dark bars are transit; dotted ones are guesses. Grey rule = unscheduled. '+(unseated?unseated+' guests have nothing but the shared stop.':'')}</p>
+  <div style="display:flex;gap:4px 14px;flex-wrap:wrap;margin-bottom:12px">${venueRows().map(r=>`<span style="font-family:var(--mono);font-size:10.5px;color:var(--ink2);white-space:nowrap"><span style="display:inline-block;width:9px;height:9px;border-radius:1px;background:${venueColor(r.venue)};margin-right:5px;vertical-align:-1px"></span>${esc(r.venue.slice(0,2).toUpperCase())} &middot; ${esc(r.venue)}</span>`).join('')}</div>
+  ${planLocked ? pathBraidRows() : `<div class="scroller"><div class="tl" style="padding:8px 0">
+    <div class="axis">${axis()}</div>${ticks()}${braidRows()||'<p class="note" style="padding:10px 12px">No guests in this view yet.</p>'}</div></div>`}`;
+}
+
+/* ---------- transit ---------- */
+function viewTransit(){
+  const used=usedLegs(), assumed=used.filter(l=>!l.known), tight=used.filter(l=>l.tight);
+  const inv=invited();
+  const worst=inv.slice().sort((a,b)=>transitMin(b)-transitMin(a)).slice(0,8);
+  // cost helpers for display
+  const fmt$=n=>n===0?'$0':'$'+n.toFixed(2);
+  function legCostLabel(l){
+    if(l.mode==='walk') return '<span style="color:#1a6b2a;font-family:var(--mono);font-size:10px">free</span>';
+    if(l.mode==='car')  return `<span style="color:#b85c00;font-family:var(--mono);font-size:10px">${fmt$(legCost(l))}</span>`;
+    return `<span style="font-family:var(--mono);font-size:10px">${fmt$(legCost(l))}</span>`;
+  }
+  const row=l=>`<tr><td><b>${esc(l.a)}</b> <span class="gsub">to</span> <b>${esc(l.b)}</b>
+      <div class="gsub">${l.n} guest${l.n===1?'':'s'} make this move${l.known?'':' · assumed, not measured'}${l.tight?' · '+l.tight+' too tight to make':''}</div></td>
+    <td><input class="legin" value="${l.mins}" onchange="setLeg('${esc(l.a)}','${esc(l.b)}','mins',this.value)"> <span class="gsub">min</span>
+      <select class="gsel" style="margin-left:4px" onchange="setLeg('${esc(l.a)}','${esc(l.b)}','mode',this.value)">
+        ${modes().map(m=>`<option value="${esc(m)}"${l.mode===m?' selected':''}>${esc(m)}</option>`).join('')}
+        ${modes().includes(l.mode)?'':`<option value="${esc(l.mode)}" selected>${esc(l.mode)} (custom)</option>`}
+      </select>${l.mode==='car'?` <input class="legin" style="width:38px;margin-left:4px" value="${l.miles||''}" placeholder="mi" title="Distance in miles — used for per-mile cost" onchange="setLeg('${esc(l.a)}','${esc(l.b)}','miles',this.value)"> <span class="gsub">mi</span>`:''} ${legCostLabel(l)}</td></tr>`;
+  // cost equity data
+  const byCost=inv.slice().map(g=>({g,cost:transitCost(g),carMin:carLegs(g).reduce((n,l)=>n+l.mins,0),trainN:trainLegs(g).length}))
+    .sort((a,b)=>b.cost-a.cost);
+  const costs=byCost.map(x=>x.cost);
+  const minC=costs.length?Math.min(...costs):0, maxC=costs.length?Math.max(...costs):0;
+  const medC=costs.length?costs.slice().sort((a,b)=>a-b)[Math.floor(costs.length/2)]:0;
+  const hasCarGuests=byCost.filter(x=>x.carMin>0).length;
+  return `<div class="toolbar"><button class="btn solid" onclick="tionti()">Re-plan with these times</button></div>
+  <p class="note" style="margin-bottom:14px">Nothing here is precalculated — every leg is a number and a mode you set. Unset pairs run on a ${DEFAULT_LEG}-minute placeholder so nothing silently breaks. The loop runs 11a&ndash;4p and nothing can sit outside it, so the solver stops proposing itineraries that can't physically be made in the time between two stops. Dotted legs on the braid are ones it had to assume.</p>
+  <p class="note" style="margin-bottom:14px">Cost model: walk = free · train&thinsp;/&thinsp;bus = $${COST_TRAIN.toFixed(2)} per ticket · car = $${COST_CAR_BASE.toFixed(2)} base + $${COST_CAR_PM.toFixed(2)}&thinsp;/&thinsp;min + $${COST_CAR_MILE.toFixed(2)}&thinsp;/&thinsp;mi (set miles on each car leg below). The solver favours walking first, then transit, then car when building itineraries.</p>
+  <div class="panel" style="margin-bottom:16px"><h2>Transit modes</h2>
+    <p class="note">Add whatever your city loop actually uses — bike, ferry, shuttle van, golf cart, anything.</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">
+      ${modes().map(m=>`<span class="btn sm" style="display:inline-flex;align-items:center;gap:6px">${esc(m)} <button onclick="removeMode('${esc(m)}')" title="Remove" style="border:0;background:none;padding:0;color:var(--ink3);font-family:var(--mono)">×</button></span>`).join('')}
+    </div>
+    <div style="display:flex;gap:6px;margin-top:10px">
+      <input id="newMode" placeholder="e.g. bike" style="padding:6px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--card);width:160px" onkeydown="if(event.key==='Enter'){addMode(this.value);this.value=''}">
+      <button class="btn sm" onclick="const i=document.getElementById('newMode');addMode(i.value);i.value=''">Add mode</button>
+    </div></div>
+  <div class="cols"><div>
+    <div class="panel"><h2>Moves your plan actually makes</h2>
+      <p class="note">Only the pairs someone is currently routed between. Add a new partner and re-plan to see their legs here.</p>
+      <table class="ledger" style="margin-top:10px">${used.map(row).join('')||'<tr><td class="note">No one moves between venues yet.</td></tr>'}</table></div>
+    ${(()=>{
+      // All possible venue pairs from live slots — lets you set travel times for new
+      // partners (e.g. tentative) before anyone is routed through them.
+      const venues=[...new Set(live().map(s=>s.venue))];
+      const allPairs=[];
+      for(let i=0;i<venues.length;i++) for(let j=i+1;j<venues.length;j++) allPairs.push([venues[i],venues[j]]);
+      const usedKeys=new Set(used.map(l=>legKey(l.a,l.b)));
+      const unset=allPairs.filter(([a,b])=>!usedKeys.has(legKey(a,b)));
+      if(!unset.length)return '';
+      return `<div class="panel" style="padding:0">
+        <div style="padding:11px 13px;display:flex;justify-content:space-between;align-items:center">
+          <span><b>Venue pairs not yet in any itinerary</b> <span class="gsub" style="margin-left:6px">${unset.length} pair${unset.length===1?'':'s'} — set times before re-planning</span></span>
+          <button class="btn sm" onclick="unsetPairsOpen=!unsetPairsOpen;document.getElementById('unset-pairs').style.display=unsetPairsOpen?'block':'none';this.textContent=unsetPairsOpen?'▴ collapse':'▸ expand'">${unsetPairsOpen?'▴ collapse':'▸ expand'}</button>
+        </div>
+        <div id="unset-pairs" style="display:${unsetPairsOpen?'block':'none'};padding:0 13px 13px">
+          <p class="note" style="margin-bottom:8px">These venue pairs exist in your plan but nobody is currently routed between them — either because the slot is new, tentative, or the solver hasn't placed anyone there yet. Set travel times here so re-planning uses real numbers from the start.</p>
+          <table class="ledger">${unset.map(([a,b])=>{const l=leg(a,b);return `<tr><td><b>${esc(a)}</b> <span class="gsub">↔</span> <b>${esc(b)}</b></td>
+            <td><input class="legin" value="${l.mins}" onchange="setLeg('${esc(a)}','${esc(b)}','mins',this.value)"> <span class="gsub">min</span>
+              <select class="gsel" style="margin-left:4px" onchange="setLeg('${esc(a)}','${esc(b)}','mode',this.value)">
+                ${modes().map(m=>`<option value="${esc(m)}"${l.mode===m?' selected':''}>${esc(m)}</option>`).join('')}
+              </select></td></tr>`}).join('')}</table>
+        </div>
+      </div>`;
+    })()}
+    ${assumed.length?`<div class="panel"><h2>Set these before finalising</h2>
+      <p class="note">These pairs appear in the current itineraries but have no measured time — running on a ${DEFAULT_LEG}-min placeholder. Any leg you've already set and saved is confirmed above. These are only the ones still missing.</p>
+      <table class="ledger">${assumed.map(l=>`<tr><td><b>${esc(l.a)}</b> <span class="gsub">to</span> <b>${esc(l.b)}</b><div class="gsub">${l.n} guest${l.n===1?'':'s'} make this move</div></td><td style="text-align:right"><span style="font-family:var(--mono);font-size:11px;color:#b85c00">${DEFAULT_LEG}m placeholder</span></td></tr>`).join('')}</table></div>`:
+    `<div class="panel"><p class="note" style="padding:4px 0">All legs used in the current plan have been measured. ✓</p></div>`}
+  </div><div>
+    ${tight.length?`<div class="panel"><h2>Connections that don't make</h2>
+      <table class="ledger">${tight.map(l=>`<tr><td>${esc(l.a)} → ${esc(l.b)}</td><td>${l.tight} guests short</td></tr>`).join('')}</table>
+      <p class="note">The gap between these two bookings is smaller than the travel time. Re-plan, move a slot, or shorten one.</p></div>`:''}
+    <div class="panel"><h2>Transit time &amp; cost</h2>
+      <table class="ledger">${worst.map(g=>{
+        const tc=transitCost(g),cm=carLegs(g).reduce((n,l)=>n+l.mins,0),tn=trainLegs(g).length;
+        const costColor=cm>0?'color:#b85c00':tc===0?'color:#1a6b2a':'';
+        return `<tr><td>${esc(g.n)}${accessFlag(g)?' <span class="flag">access</span>':''}<div class="gsub">${itin(g).length} stops · ${idleTime(g)} min free</div></td>
+          <td><span style="font-family:var(--mono);${costColor}">${fmt$(tc)}</span>
+          <div class="gsub">${transitMin(g)} min total${walkMin(g)?' · '+walkMin(g)+'m walk':''}${tn?' · '+tn+' ticket'+(tn>1?'s':''):''}${cm?' · '+cm+'m car':''}</div></td></tr>`;}).join('')||'<tr><td class="note">Nobody is moving.</td></tr>'}</table>
+      <p class="note">The solver prices walk as free, train&thinsp;/&thinsp;bus at $${COST_TRAIN.toFixed(2)}, and car at $${COST_CAR_BASE.toFixed(2)} base + $${COST_CAR_PM.toFixed(2)}/min + $${COST_CAR_MILE.toFixed(2)}/mi — guests needing a cane, chair, or similar are additionally shielded from long walks.</p></div>
+    <div class="panel"><h2>Cost equity across all guests</h2>
+      <p class="note">Range: <b>${fmt$(minC)}</b> min · <b>${fmt$(medC)}</b> median · <b>${fmt$(maxC)}</b> max${hasCarGuests?' · '+hasCarGuests+' guest'+(hasCarGuests>1?'s':'')+' need a car leg':''}</p>
+      <table class="ledger" style="margin-top:8px">
+        <tr><th>Guest</th><th>Total</th><th>Breakdown</th></tr>
+        ${byCost.map(({g,cost,carMin,trainN})=>{
+          const hasC=carMin>0;
+          return `<tr><td>${esc(g.n)}${accessFlag(g)?' <span class="flag">access</span>':''}</td>
+            <td style="font-family:var(--mono);${hasC?'color:#b85c00':cost===0?'color:#1a6b2a':''}">${fmt$(cost)}</td>
+            <td class="gsub">${walkMin(g)?walkMin(g)+'m walk · ':''}${trainN?trainN+' ticket'+(trainN>1?'s':''):''} ${carMin?'· '+carMin+'m car':''}</td></tr>`;}).join('')}
+      </table></div>
+  </div></div>`;
+}
+
+/* ---------- what if ---------- */
+function whatIf(s){ // hold assignments fixed, remove this slot
+  const inv=invited(); let lost=0, zero=0, senses={};
+  inv.forEach(g=>{
+    const ids=(plan.itin[g.id]||[]);
+    if(!ids.includes(s.id))return;
+    const before=Object.keys(coverage(g));
+    const kept=itin(g).filter(x=>x.id!==s.id);
+    const m={};kept.forEach(x=>(x.senses||[]).forEach(y=>{if(g.s.includes(y))m[y]=1}));
+    const after=Object.keys(m);
+    const gone=before.filter(x=>!after.includes(x));
+    gone.forEach(x=>senses[x]=(senses[x]||0)+1);
+    lost+=gone.length;
+    if(before.length&&!after.length)zero++;
+  });
+  return {n:headcount(s),lost,zero,senses};
+}
+function viewRisk(){
+  const tent=plan.slots.filter(s=>s.status!=='confirmed');
+  const rows=tent.map(s=>({s,w:whatIf(s)})).sort((a,b)=>(b.w.zero*4+b.w.lost)-(a.w.zero*4+a.w.lost));
+  const conf=plan.slots.filter(s=>s.status==='confirmed');
+  return `<div class="toolbar"><button class="btn solid" onclick="tionti()">Re-plan with current statuses</button></div>
+  <div class="cols"><div>
+    <div class="panel"><h2>If this partner falls through</h2>
+      <p class="note">Assuming you don't re-plan. The number is how many senses guests lose outright — not how many people are in the room. Flip a status and the whole day recalculates; hit re-plan to let the solver route around it.</p>
+      <table class="ledger" style="margin-top:10px">${rows.map(({s,w})=>`<tr>
+        <td><b>${esc(s.venue)}</b> <span class="gsub">${hhmm(s.start)}–${hhmm(s.end)} · ${s.sizing==='capped'?'max '+s.cap:s.sizing}</span>
+          <div style="margin-top:3px">${Object.keys(w.senses).map(x=>`<span style="color:var(--${x})">■</span> ${x} ×${w.senses[x]}`).join('&nbsp;&nbsp;')||'<span class="gsub">nothing lost — everyone gets these senses elsewhere</span>'}</div></td>
+        <td>−${w.lost}${w.zero?`<div class="gsub">${w.zero} to zero</div>`:''}
+          <div style="margin-top:4px"><select class="gsel" onchange="setStatus2('${s.id}',this.value)">
+            <option value="tentative"${s.status==='tentative'?' selected':''}>tentative</option>
+            <option value="confirmed"${s.status==='confirmed'?' selected':''}>confirmed</option>
+            <option value="dropped"${s.status==='dropped'?' selected':''}>dropped</option></select></div></td></tr>`).join('')||'<tr><td class="note">Everything is confirmed.</td></tr>'}</table></div>
+  </div><div>
+    <div class="panel"><h2>Load against capacity</h2>
+      <table class="ledger">${live().map(s=>{const n=headcount(s),c=capOf(s);
+        return `<tr><td>${esc(s.venue)} <span class="gsub">${hhmm(s.start)}</span></td><td>${n}${c<9999?(s.sizing==='flex'?' / ~'+c:' / '+c):' · flex'}${n>c?' ⚠':''}</td></tr>`}).join('')}</table>
+      <p class="note">A capped stop that runs hot is the signal to ask for a second sitting rather than a bigger room — two sittings is usually the easier yes, and it splits the group in a way the braid can absorb.</p></div>
+    <div class="panel"><h2>Locked in</h2>
+      <table class="ledger">${conf.map(s=>`<tr><td>${esc(s.venue)}</td><td>${hhmm(s.start)}–${hhmm(s.end)}</td></tr>`).join('')}</table></div>
+  </div></div>`;
+}
+
+/* ---------- arcs & targets ---------- */
+function openWindows(){ // sweep the clock for stretches when a real share of the room is free
+  const inv=interested(); if(!inv.length) return [];
+  const need=Math.max(3,Math.round(inv.length*0.25)), step=5, out=[];
+  const busy=(g,m)=>itin(g).some(s=>s.start<=m&&s.end>m);
+  let run=null;
+  for(let m=T0;m<T1;m+=step){
+    const free=inv.filter(g=>!busy(g,m));
+    if(free.length>=need){
+      const ids=new Set(free.map(g=>g.id));
+      if(!run) run={a:m,b:m+step,set:ids};
+      else {run.b=m+step; run.set=new Set([...run.set].filter(x=>ids.has(x)));}
+      if(run.set.size<need){ if(run.b-step-run.a>=25) out.push({a:run.a,b:run.b-step,set:run.set}); run=null; }
+    } else { if(run&&run.b-run.a>=25) out.push(run); run=null; }
+  }
+  if(run&&run.b-run.a>=25) out.push(run);
+  return out.map(r=>({a:r.a,b:r.b,free:inv.filter(g=>r.set.has(g.id))})).filter(r=>r.free.length>=3);
+}
+function bookingTargets(){
+  const out=[],inv=interested();
+  openWindows().forEach(w=>{
+    SENSES.forEach(x=>{
+      const gain=w.free.filter(g=>g.s.includes(x)&&!coverage(g)[x]);
+      const zero=gain.filter(g=>hitCount(g)===0).length;
+      // tentative slots that already cover this sense in this window
+      const tentVenues=[...new Set(live().filter(s=>s.status==='tentative'&&(s.senses||[]).includes(x)&&s.start<w.b&&s.end>w.a).map(s=>s.venue))];
+      if(gain.length)out.push({a:w.a,b:w.b,sense:x,gain:gain.length,free:w.free.length,zero,tentVenues});
+    });
+  });
+  // an everyone-slot lifts the whole room at once
+  SENSES.forEach(x=>{
+    const gain=inv.filter(g=>g.s.includes(x)&&!coverage(g)[x]);
+    const tentVenues=[...new Set(live().filter(s=>s.status==='tentative'&&(s.senses||[]).includes(x)).map(s=>s.venue))];
+    if(gain.length)out.push({all:true,sense:x,gain:gain.length,free:inv.length,zero:gain.filter(g=>hitCount(g)===0).length,tentVenues});
+  });
+  return out.sort((p,q)=>(q.zero*3+q.gain)-(p.zero*3+p.gain));
+}
+function arcTable(){
+  const m={};interested().forEach(g=>{const k=arcKey(g);(m[k]=m[k]||{k,senses:g.s.slice(),n:0,people:[]});m[k].n++;m[k].people.push(g)});
+  return Object.values(m).map(a=>{
+    const got={};a.people.forEach(g=>Object.keys(coverage(g)).forEach(x=>got[x]=(got[x]||0)+1));
+    // nowhere = no live slot covers this sense at all
+    const nowhere=a.senses.filter(x=>!live().some(s=>(s.senses||[]).includes(x)));
+    // tentative-only = covered by at least one tentative slot but no confirmed slot
+    const tentOnly=a.senses.filter(x=>!nowhere.includes(x)&&live().some(s=>s.status==='tentative'&&(s.senses||[]).includes(x))&&!live().some(s=>s.status==='confirmed'&&(s.senses||[]).includes(x)));
+    // thin = covered somewhere confirmed, but not everyone with this arc can reach it (capacity)
+    const missed=a.senses.filter(x=>!nowhere.includes(x)&&!tentOnly.includes(x)&&(got[x]||0)<a.n);
+    const avg=a.people.reduce((n,g)=>n+hitCount(g)/g.s.length,0)/a.n;
+    return {...a,nowhere,tentOnly,missed,avg};
+  }).sort((x,y)=>(y.nowhere.length*y.n)-(x.nowhere.length*x.n)||x.avg-y.avg);
+}
+// ranked list of tentative slots by how many guests' arcs they'd unlock if confirmed
+function confirmPriority(){
+  const inv=interested();
+  return live().filter(s=>s.status==='tentative').map(s=>{
+    const unlocks=inv.filter(g=>g.s.some(x=>(s.senses||[]).includes(x)&&!live().filter(t=>t.status==='confirmed').some(t=>(t.senses||[]).includes(x)))).length;
+    const seatsLeft=Math.max(0,capOf(s)-headcount(s));
+    return {...s,unlocks,seatsLeft};
+  }).filter(s=>s.unlocks>0).sort((a,b)=>b.unlocks-a.unlocks);
+}
+// dominant unmet sense in a window (for open-windows table)
+function dominantSense(w){
+  let best=null,bv=0;
+  SENSES.forEach(x=>{const n=w.free.filter(g=>g.s.includes(x)&&!coverage(g)[x]).length;if(n>bv){bv=n;best=x}});
+  return best?{sense:best,n:bv}:null;
+}
+function senseGaps(){
+  // For each sense: recruit (no live slot), confirm (tentative only), thin (confirmed but capacity short)
+  const inv=interested();
+  return SENSES.map(x=>{
+    const needs=inv.filter(g=>g.s.includes(x));
+    if(!needs.length) return null;
+    const hasLive=live().some(s=>(s.senses||[]).includes(x));
+    const hasConfirmed=live().some(s=>s.status==='confirmed'&&(s.senses||[]).includes(x));
+    const tentSlots=live().filter(s=>s.status==='tentative'&&(s.senses||[]).includes(x));
+    const covered=inv.filter(g=>coverage(g)[x]);
+    const uncovered=needs.filter(g=>!coverage(g)[x]);
+    // thin: confirmed slot exists but not all who need it are covered (capacity pressure)
+    const thin=hasConfirmed&&uncovered.length>0;
+    // who are the affected guests (arcs that include this sense, as short labels)
+    const arcLabels=[...new Set(needs.map(g=>g.s.join('+').replace(/[A-Z]/g,m=>' '+m).trim()))].slice(0,4);
+    if(!hasLive) return {sense:x,tier:'recruit',needs:needs.length,uncovered:uncovered.length,tentSlots:[],thin:false,arcLabels};
+    if(!hasConfirmed) return {sense:x,tier:'confirm',needs:needs.length,uncovered:uncovered.length,tentSlots,thin:false,arcLabels};
+    if(thin) return {sense:x,tier:'thin',needs:needs.length,uncovered:uncovered.length,tentSlots:[],thin:true,arcLabels};
+    return null;
+  }).filter(Boolean).sort((a,b)=>{
+    const rank={recruit:0,confirm:1,thin:2};
+    return rank[a.tier]-rank[b.tier]||b.uncovered-a.uncovered;
+  });
+}
+function viewArcs(){
+  if(!interested().length)return `<div class="panel"><h2>No guests loaded</h2><p class="note">Load a plan or generate guest data first.</p></div>`;
+  const inv=interested(),gaps=senseGaps(),cp=confirmPriority(),wins=openWindows();
+
+  // Build a single unified action list, ordered by impact (guests affected)
+  // Each item: {priority, label, sub, action, actionLabel, actionStyle, badge, badgeStyle}
+  const actions=[];
+
+  // 1. Senses with zero live coverage — highest urgency
+  gaps.filter(g=>g.tier==='recruit').forEach(g=>{
+    // Best window from openWindows for this sense
+    const bestWin=wins.reduce((best,w)=>{
+      const n=w.free.filter(gx=>gx.s.includes(g.sense)&&!coverage(gx)[g.sense]).length;
+      return n>(best?.n||0)?{w,n}:best;
+    },null);
+    const winHint=bestWin?` · best window ${hhmm(bestWin.w.a)}–${hhmm(bestWin.w.b)}`:'';
+    actions.push({
+      priority:g.uncovered*3,
+      badge:'Recruit',badgeStyle:'background:#c0392b;color:#fff',
+      sense:g.sense,
+      label:`${g.uncovered} guests need ${g.sense} — no partner on the board`,
+      sub:`Find a partner covering ${g.sense}${winHint} · ~${g.uncovered} seats`,
+      action:`tab='day';render();openFitSlot()`,
+      actionLabel:'Find best window',actionStyle:'solid'
+    });
+  });
+
+  // 2. Tentative slots that would unlock the most guests if confirmed
+  cp.forEach(s=>{
+    actions.push({
+      priority:s.unlocks*2,
+      badge:'Confirm',badgeStyle:'background:#b85c00;color:#fff',
+      sense:null,
+      label:`Confirm ${esc(s.venue)} — unlocks ${s.unlocks} guests`,
+      sub:`${hhmm(s.start)}–${hhmm(s.end)} · ${(s.senses||[]).map(x=>`<span style="color:var(--${x})">■</span> ${x}`).join(' ')} · ${s.seatsLeft} seats left`,
+      action:`editSlot('${s.id}')`,
+      actionLabel:'Open slot',actionStyle:''
+    });
+  });
+
+  // 3. Capacity bottlenecks — confirmed slot exists but can't fit everyone
+  gaps.filter(g=>g.tier==='thin').forEach(g=>{
+    // find the confirmed slot(s) covering this sense
+    const confSlots=live().filter(s=>s.status==='confirmed'&&(s.senses||[]).includes(g.sense));
+    const venues=confSlots.map(s=>esc(s.venue)).join(', ');
+    actions.push({
+      priority:g.uncovered,
+      badge:'Capacity',badgeStyle:'background:#555;color:#fff',
+      sense:g.sense,
+      label:`${g.uncovered} guests can't reach ${g.sense} — ${venues} is full`,
+      sub:`Ask for a second sitting · +${g.uncovered} seats needed`,
+      action:`editSlot('${confSlots[0]?.id}')`,
+      actionLabel:'Open slot',actionStyle:''
+    });
+  });
+
+  // Sort by impact
+  actions.sort((a,b)=>b.priority-a.priority);
+
+  const coveragePct=Math.round(inv.filter(g=>hitCount(g)===g.s.length).length/inv.length*100);
+  const zeroPct=inv.filter(g=>hitCount(g)===0).length;
+  const avgCov=Math.round(inv.reduce((n,g)=>n+hitCount(g)/g.s.length,0)/inv.length*100);
+
+  return `
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">
+    <div class="panel" style="flex:1;min-width:140px;padding:14px 18px">
+      <div class="eyebrow">Arc coverage</div>
+      <div style="font-size:26px;font-weight:600;font-family:var(--mono);margin-top:4px">${avgCov}%</div>
+      <div class="gsub">avg across all ${inv.length} interested</div>
+    </div>
+    <div class="panel" style="flex:1;min-width:140px;padding:14px 18px">
+      <div class="eyebrow">Full arc hit</div>
+      <div style="font-size:26px;font-weight:600;font-family:var(--mono);margin-top:4px">${coveragePct}%</div>
+      <div class="gsub">guests with every sense covered</div>
+    </div>
+    <div class="panel" style="flex:1;min-width:140px;padding:14px 18px">
+      <div class="eyebrow">Nothing scheduled</div>
+      <div style="font-size:26px;font-weight:600;font-family:var(--mono);margin-top:4px">${zeroPct}</div>
+      <div class="gsub">guests with zero individual slots</div>
+    </div>
+    <div class="panel" style="flex:1;min-width:140px;padding:14px 18px">
+      <div class="eyebrow">Open windows</div>
+      <div style="font-size:26px;font-weight:600;font-family:var(--mono);margin-top:4px">${wins.length}</div>
+      <div class="gsub">time blocks where guests are free</div>
+    </div>
+  </div>
+  ${actions.length?`
+  <div class="panel">
+    <h2>What to fix, in order</h2>
+    <p class="note" style="margin-bottom:12px">Sorted by how many guests each action would improve. Fix the top item, re-plan, then come back.</p>
+    <table class="ledger">
+    ${actions.map((a,i)=>`<tr style="${i===0?'background:#fafaf7':''}">
+      <td style="width:80px;vertical-align:top;padding-top:9px">
+        <span style="display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:2px;${a.badgeStyle}">${a.badge}</span>
+      </td>
+      <td>
+        <div style="font-weight:600;font-size:13px;margin-bottom:2px">
+          ${a.sense?`<span style="color:var(--${a.sense})">■</span> `:''}${a.label}
+        </div>
+        <div class="gsub">${a.sub}</div>
+      </td>
+      <td style="text-align:right;white-space:nowrap;vertical-align:top;padding-top:7px">
+        <button class="btn sm${a.actionStyle==='solid'?' solid':''}" onclick="${a.action};render()">${a.actionLabel}</button>
+      </td></tr>`).join('')}
+    </table>
+  </div>`:`<div class="panel"><p class="note" style="padding:6px 0">Every sense in every arc is covered and all slots have room. Nothing to fix right now — re-plan to refresh.</p></div>`}
+  ${wins.length?`<div class="panel" style="margin-top:12px">
+    <h2>Free windows on the clock</h2>
+    <p class="note" style="margin-bottom:8px">These are the hours where a meaningful share of guests are unscheduled. The best new slot goes here.</p>
+    <table class="ledger">${wins.map(w=>{
+      const d=dominantSense(w);
+      return `<tr><td style="font-family:var(--mono);font-size:12px">${hhmm(w.a)}–${hhmm(w.b)}</td>
+        <td>${w.free.length} guests free</td>
+        <td>${d?`<span style="color:var(--${d.sense})">■</span> ${d.sense} · ${d.n} need it`:'<span class="gsub">arc fully covered</span>'}</td>
+        <td style="text-align:right"><button class="btn sm" onclick="fitState={senses:${d?`['${d.sense}']`:'[]'},dur:45,cap:null,gender:''};renderFitSlot();render()">Find partner</button></td>
+      </tr>`;
+    }).join('')}</table>
+  </div>`:''}`;
+}
+
+/* ---------- guests ---------- */
+function whyNoItinerary(g){
+  // Guest not in the planning pool — Stage column has an "Add to plan" button
+  if(gst(g.id).status!=='invited') return 'not in this plan — use "Add to plan" in the Stage column, or click All Interested Guests';
+  // Nothing was even solved for this guest (first run)
+  if(!plan.itin[g.id]) return 'not yet solved — click Re-plan in the Day tab toolbar';
+  // No flex/capped slots exist yet
+  const flex=live().filter(s=>s.sizing!=='all');
+  if(!flex.length) return 'no partner slots in the program yet — add a slot on the Day tab';
+  // Check each flex slot for why it wasn't assigned
+  let allGenderBlocked=true, allFull=true, allConflict=true;
+  for(const s of flex){
+    if(!genderMatch(g,s)) continue;
+    allGenderBlocked=false;
+    if(headcount(s)>=capOf(s)) continue;
+    allFull=false;
+    if(!conflicts(s,itin(g))) {allConflict=false;break;}
+  }
+  if(allGenderBlocked) return 'every slot has a gender restriction this guest doesn\'t match';
+  if(allFull) return 'all matching slots were full when solver reached this guest — Re-plan, raise slot caps, or add more partner slots';
+  if(allConflict) return 'all available slots overlap in time with each other for this guest';
+  return 'solver didn\'t assign — try Re-plan';
+}
+let gFilter='all',gQuery='',gInterestAll=false;
+function toggleAllInterest(){
+  gInterestAll=!gInterestAll;
+  document.querySelectorAll('details.g-int').forEach(d=>d.open=gInterestAll);
+  const b=document.getElementById('gIntAllBtn');
+  if(b)b.textContent=gInterestAll?'▴ Collapse interests':'▾ Expand all interests';
+}
+function ribbonFor(g){const c=coverage(g);
+  return '<span class="ribbon">'+SENSES.map(s=>{
+    if(!g.s.includes(s))return `<span class="cell" title="${s}"></span>`;
+    if(c[s])return `<span class="cell" style="background:var(--${s});opacity:${c[s]<1?.5:1}" title="${s}${c[s]<1?' — via a tentative booking':''}"></span>`;
+    return `<span class="cell want" style="color:var(--${s})" title="${s} — missed"></span>`}).join('')+'</span>'}
+function viewGuests(){
+  let rows=GUESTS.slice();
+  if(gQuery)rows=rows.filter(g=>(g.n+g.c+g.f).toLowerCase().includes(gQuery.toLowerCase()));
+  if(gFilter==='paid')rows=rows.filter(g=>g.st==='paid');
+  if(gFilter==='invited')rows=rows.filter(g=>g.st==='invited');
+  if(gFilter==='requested')rows=rows.filter(g=>g.st==='requested'||g.st==='interested');
+  if(gFilter==='needs')rows=rows.filter(g=>dietFlag(g)||accessFlag(g));
+  const counts={
+    all:GUESTS.length,
+    paid:GUESTS.filter(g=>g.st==='paid').length,
+    invited:GUESTS.filter(g=>g.st==='invited').length,
+    requested:GUESTS.filter(g=>g.st==='requested'||g.st==='interested').length,
+    needs:GUESTS.filter(g=>dietFlag(g)||accessFlag(g)).length,
+  };
+  const hasInterest=rows.some(g=>g.interest);
+  const filterTitles={all:'Show all guests in the list',paid:'Show only guests who have paid',invited:'Show only guests currently in the plan',requested:'Show guests who submitted an expression of interest',needs:'Show only guests with dietary or access requirements'};
+  const f=(k,l)=>`<button class="btn sm" title="${filterTitles[k]||''}"${gFilter===k?' style="background:var(--ink);color:var(--paper);border-color:var(--ink)"':''} onclick="gFilter='${k}';render()">${l}</button>`;
+  return `<div style="display:flex;flex-wrap:wrap;gap:0;align-items:stretch;border:1px solid var(--rule);border-radius:4px;margin-bottom:10px;overflow:hidden">
+    <div style="display:flex;flex-direction:column;flex:1;justify-content:flex-end">
+      <div style="display:flex;gap:4px;padding:6px 8px;align-items:center;flex-wrap:wrap">
+        <input class="searchin" placeholder="Search name, city, field" value="${esc(gQuery)}" oninput="gQuery=this.value;render();const i=document.querySelector('.searchin');i.focus();i.setSelectionRange(i.value.length,i.value.length)" style="flex:1;min-width:160px">
+        ${f('all','All '+counts.all)}${f('paid','Paid · '+counts.paid)}${f('invited','Invited · '+counts.invited)}${f('requested','Interested · '+counts.requested)}${f('needs','Access needs · '+counts.needs)}
+        ${hasInterest?`<button id="gIntAllBtn" class="btn sm" onclick="toggleAllInterest()">${gInterestAll?'▴ Collapse':'▾ Interests'}</button>`:''}
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;border-left:1px solid var(--rule);margin-left:auto">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:5px 10px 3px;border-bottom:1px solid var(--rule)">Export</div>
+      <div style="display:flex;gap:4px;padding:6px 8px;align-items:center">
+        <button class="btn green" onclick="exportItinerariesJSON()" title="${planLocked?'Export final locked itineraries':'Export current itineraries (paths not yet locked)'}">Itineraries JSON</button>
+      </div>
+    </div>
+  </div>
+  <div style="overflow:auto"><table><thead><tr>
+    <th style="width:150px;min-width:150px">Guest</th>
+    <th><div class="rhd">${SENSES.map(s=>`<span title="${s}">${s.slice(0,3)}</span>`).join('')}</div></th>
+    <th style="min-width:320px">Their day</th>
+    <th style="width:140px;min-width:120px">Perspective · Disciplines</th>
+    <th style="min-width:100px">Path</th>
+    <th style="white-space:nowrap">Transit $</th>
+    <th style="white-space:nowrap">Total $</th>
+    <th>Notes</th></tr></thead><tbody>
+  ${rows.map(g=>{const it=itin(g),s=gst(g.id);
+    const rowBg=g.st==='paid'?'background:#f0faf3':g.st==='invited'?'background:#fefdf0':'';
+    const discs=parseDiscs(g.f).map(d=>`<span style="display:inline-block;background:#f0f0f0;border-radius:3px;padding:1px 5px;font-size:10px;margin:1px 2px 1px 0;white-space:nowrap">${esc(d)}</span>`).join('');
+    const tc=transitCost(g), hasCar=carLegs(g).length>0, trainN=trainLegs(g).length;
+    const costColor=hasCar?'color:#b85c00':tc===0?'color:#1a6b2a':'';
+    const costFmt=tc===0?'$0':'$'+tc.toFixed(2);
+    const costBreak=[trainN?trainN+' ticket'+(trainN>1?'s':''):'',hasCar?carLegs(g).reduce((n,l)=>n+l.mins,0)+'m car':''].filter(Boolean).join(' · ')||'on foot';
+    const total=totalEventCost(g), over=overBudget(g);
+    const vc=venueCost(g);
+    const totalColor=over?'color:#c0392b;font-weight:600':total===0?'color:#1a6b2a':'';
+    return `<tr style="${rowBg}${over?';outline:1px solid #f0c070':''}" title="${over?'Over $'+BUDGET_CAP+' budget':''}">
+    <td style="width:150px;min-width:150px"><div class="gname">${esc(g.n)}</div><div class="gsub">${esc(g.c)} · ${hitCount(g)}/${g.s.length}</div>${g.interest?`<details class="g-int"${gInterestAll?' open':''}><summary style="font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);cursor:pointer;list-style:none;margin-top:4px;user-select:none">Interest</summary><div style="font-size:11px;color:var(--ink2);margin-top:4px;max-width:260px;line-height:1.4;white-space:normal;word-break:break-word">${esc(g.interest)}</div></details>`:''}</td>
+    <td>${ribbonFor(g)}</td>
+    <td style="font-size:12px;min-width:320px">${it.length? it.map((x,i)=>{const l=i?leg(it[i-1].venue,x.venue):null;
+      return (l&&l.mins?`<span class="gsub"> ${l.mins}m ${l.mode} </span>→ `:(i?' → ':''))+hhmm(x.start)+' '+esc(x.venue)+(x.cost?` <span class="gsub">(+$${x.cost})</span>`:'')}).join('')
+      : `<span class="gsub">nothing scheduled</span><div style="font-size:10px;color:#b85c00;margin-top:4px;line-height:1.4">↳ ${esc(whyNoItinerary(g))}</div>`}
+      <div class="gsub">${transitMin(g)} min in transit · ${idleTime(g)} min free</div></td>
+    <td style="font-size:11px;width:140px;min-width:120px;vertical-align:top"><span class="flag" style="margin-bottom:4px;display:inline-block">${esc(g.p||'—')}</span><br>${discs||'<span class="gsub">—</span>'}</td>
+    ${(()=>{
+      const ps=gst(g.id).status;
+      if(ps!=='invited') return '<td style="vertical-align:top;min-width:100px"><span class="gsub" style="font-size:10px">—</span></td>';
+      let curLabel,allOptions;
+      if(planLocked){
+        const pid=plan.guestPath&&plan.guestPath[g.id];
+        curLabel=pid?pid.toUpperCase():'';
+        const paths=pathList();
+        const occupants={};
+        invited().forEach(x=>{const p=plan.guestPath&&plan.guestPath[x.id];if(p)occupants[p]=(occupants[p]||[]).concat(x.n)});
+        allOptions=paths.map(p=>{
+          // Show all occupants of every path; current path gets "you + others"
+          const all=occupants[p.pid]||[];
+          const who=all.length?' · '+all.join(', '):'';
+          return `<option value="${p.pid}"${p.pid===pid?' selected':''}>${p.pid.toUpperCase()}${who}</option>`;
+        }).join('');
+      }else{
+        const {labelMap,pathSlots}=livePathMap();
+        curLabel=labelMap[g.id]||'';
+        const occupants={};
+        invited().forEach(x=>{const l=labelMap[x.id];if(l)occupants[l]=(occupants[l]||[]).concat(x.n)});
+        const allLabels=Object.keys(pathSlots).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+        allOptions=allLabels.map(label=>{
+          // Show all occupants; your own path shows you + others
+          const all=occupants[label]||[];
+          const who=all.length?' · '+all.join(', '):'';
+          return `<option value="${label}"${label===curLabel?' selected':''}>${label}${who}</option>`;
+        }).join('');
+      }
+      return `<td style="vertical-align:top;min-width:100px">
+        <div style="font-family:var(--mono);font-size:12px;font-weight:700;margin-bottom:3px">${curLabel||'<span style="color:#b85c00;font-size:10px">—</span>'}</div>
+        <select class="gsel" style="font-size:10px;max-width:160px" title="Select a path to swap this guest onto it" onchange="assignGuestToPath('${g.id}',this.value)">${allOptions}</select>
+      </td>`;
+    })()}
+    <td style="font-family:var(--mono);font-size:12px;white-space:nowrap;vertical-align:top;${costColor}">${costFmt}${hasCar?` <span class="flag" style="border-color:#d9741a;color:#b85c00;background:#fff5eb">car</span>`:''}
+      <div class="gsub" style="font-size:10px">${costBreak}</div></td>
+    <td style="font-family:var(--mono);font-size:12px;white-space:nowrap;vertical-align:top;${totalColor}">${total===0?'$0':'$'+total.toFixed(2)}${over?` <span class="flag" style="border-color:#c0392b;color:#c0392b;background:#fff0f0">over</span>`:''}
+      <div style="margin-top:4px;display:flex;flex-direction:column;gap:3px">${(()=>{
+        const typeColor={free:'#1a6b2a','pre-paid':'#1a4a8b','gift card':'#7a3b9a','out-of-pocket':'#b85c00'};
+        const typeBg={free:'#d6f0df','pre-paid':'#dce8fb','gift card':'#f0e0fa','out-of-pocket':'#fff5eb'};
+        const stopLines=it.map(x=>{
+          const ct=x.costType||'free';
+          const col=typeColor[ct]||'#555';
+          const bg=typeBg[ct]||'#f5f5f3';
+          const amt=x.cost?` $${x.cost}`:'';
+          return `<span style="font-size:9px;display:flex;align-items:center;gap:4px;color:var(--ink3)">`+
+            `<span style="background:${bg};color:${col};border-radius:2px;padding:1px 5px;font-size:9px;letter-spacing:.04em">${ct}</span>`+
+            `<span>${esc(x.venue.slice(0,10))}${amt}</span></span>`;
+        });
+        return stopLines.length?stopLines.join(''):`<span style="font-size:10px;color:var(--ink3)">all free · cap $${BUDGET_CAP}</span>`;
+      })()}</div></td>
+    <td style="font-size:11px;white-space:normal;word-break:break-word;vertical-align:top">${(()=>{
+      // New CSV format: accessLabels / dietLabels / dietNotes
+      if(g.accessLabels!=null||g.dietLabels!=null){
+        const al=g.accessLabels&&g.accessLabels.length?'<span class="flag">access</span> '+esc(g.accessLabels.join(', ')):'';
+        const dl=g.dietLabels&&g.dietLabels.length?'<span class="flag">diet</span> '+esc(g.dietLabels.join(', ')):'';
+        const dn=g.dietNotes?'<div class="gsub" style="margin-top:2px">'+esc(g.dietNotes)+'</div>':'';
+        return [al,dl].filter(Boolean).join('<br>')+dn;
+      }
+      // Legacy: raw g.d text
+      return g.d?`<span class="flag">${accessFlag(g)?'access':'diet'}</span> ${esc(g.d)}`:'';
+    })()}</td>
+    </tr>`}).join('')}
+  </tbody></table></div>`;
+}
+
+/* ---------- shared window scorer ---------- */
+function scoreWindows(senses,dur,cap,gender,excludeStart){
+  const STEP=15,inv=interested(),results=[];
+  for(let a=T0;a<=T1-dur;a+=STEP){
+    if(a===excludeStart)continue; // skip the slot's own current time
+    const b=a+dur;
+    const free=inv.filter(g=>{
+      if(gender&&g.p!==gender)return false;
+      const it=itin(g);
+      if(it.some(x=>a<x.end&&x.start<b))return false;
+      const before=it.filter(x=>x.end<=a).sort((x,y)=>y.end-x.end)[0];
+      const after=it.filter(x=>x.start>=b).sort((x,y)=>x.start-y.start)[0];
+      if(before&&(a-before.end)<leg(before.venue,'__probe__').mins)return false;
+      if(after&&(after.start-b)<leg('__probe__',after.venue).mins)return false;
+      return true;
+    });
+    const gainers=senses.length?free.filter(g=>senses.some(x=>g.s.includes(x)&&!coverage(g)[x])):free;
+    const depth=senses.length?gainers.reduce((n,g)=>n+senses.filter(x=>g.s.includes(x)&&!coverage(g)[x]).length,0):0;
+    const score=gainers.length*2+depth*0.5+(free.length/Math.max(1,inv.length))*free.length*0.3;
+    if(free.length>=1)results.push({a,b,free:free.length,gainers:gainers.length,depth,score});
+  }
+  return results.sort((x,y)=>y.score-x.score);
+}
+
+/* ---------- fit-slot finder ---------- */
+let fitState=null; // {senses, dur, cap, gender}
+function openFitSlot(){
+  fitState={senses:[],dur:45,cap:null,gender:''};
+  renderFitSlot();
+}
+function renderFitSlot(){
+  if(!fitState){drawerHost.innerHTML='';return}
+  const STEP=15,inv=invited();
+  const {senses,dur,cap,gender}=fitState;
+
+  const top=scoreWindows(senses,dur,cap,gender,null).slice(0,8);
+
+  const sBtn=s=>`<button onclick="fitToggle('${s}',this)" aria-pressed="${senses.includes(s)?'true':'false'}"
+    style="${senses.includes(s)?'background:var(--'+s+');color:#fff;border-color:transparent':'color:var(--'+s+')'};border:1px solid var(--rule);border-radius:2px;padding:4px 9px;font-size:12px;font-weight:500;cursor:pointer">${s}</button>`;
+
+  drawerHost.innerHTML=`<div class="scrim" onclick="closeFit()"></div><div class="drawer">
+    <div class="eyebrow">Find the best window</div>
+    <h2 style="font-size:16px;margin:2px 0 14px">Fit a new partner slot</h2>
+    <div class="field"><label class="eyebrow">Senses this partner covers</label>
+      <div class="spick">${SENSES.map(sBtn).join('')}</div></div>
+    <div class="row2">
+      <div class="field" style="flex:1"><label class="eyebrow">Duration (min)</label>
+        <input id="fit_dur" type="number" min="15" max="180" step="15" value="${dur}"
+          oninput="fitState.dur=Math.max(15,parseInt(this.value)||45);renderFitSlot()"></div>
+      <div class="field" style="flex:1"><label class="eyebrow">Seats needed</label>
+        <input id="fit_cap" type="number" min="1" placeholder="any"
+          value="${cap||''}" oninput="fitState.cap=parseInt(this.value)||null;renderFitSlot()"></div>
+    </div>
+    <div class="field"><label class="eyebrow">Gender restriction</label>
+      <select onchange="fitState.gender=this.value;renderFitSlot()">
+        <option value=""${!gender?' selected':''}>Everyone</option>
+        <option value="Woman"${gender==='Woman'?' selected':''}>Women only</option>
+        <option value="Man"${gender==='Man'?' selected':''}>Men only</option>
+      </select></div>
+    <div class="eyebrow" style="margin:6px 0 8px">Ranked windows — ${inv.length} guests interested</div>
+    ${top.length?`<table class="ledger">
+      ${top.map((r,i)=>{
+        const pct=Math.round(r.gainers/Math.max(1,inv.length)*100);
+        return `<tr style="${i===0?'background:#f0faf3':''}">
+          <td>
+            <span class="rank">${String(i+1).padStart(2,'0')}</span>
+            <b>${hhmm(r.a)}&ndash;${hhmm(r.b)}</b>
+            <div class="gsub">${r.free} free · ${r.gainers} gain a new sense (${pct}%)</div>
+          </td>
+          <td style="text-align:right">
+            <button class="btn sm solid" onclick="fitApply(${r.a},${r.b})">Use this</button>
+          </td></tr>`;
+      }).join('')}
+    </table>`:`<p class="note">No window fits — try fewer senses, a shorter duration, or fewer seats.</p>`}
+    <div style="margin-top:18px;display:flex;gap:8px">
+      <button class="btn" title="Close this panel without adding a slot" onclick="closeFit()">Cancel</button>
+    </div>
+  </div>`;
+}
+function fitToggle(s,b){
+  if(!fitState)return;
+  const i=fitState.senses.indexOf(s);
+  if(i<0)fitState.senses.push(s);else fitState.senses.splice(i,1);
+  renderFitSlot();
+}
+function fitApply(a,b){
+  const s={id:uid(),venue:'New partner',start:a,end:b,senses:fitState.senses.slice(),status:'tentative',
+    sizing:fitState.cap?'capped':'flex',cap:fitState.cap||null,gender:fitState.gender||null};
+  plan.slots.push(s);_vmap=null;fitState=null;editing=s.id;pend=null;save();render();draw();
+}
+function closeFit(){fitState=null;drawerHost.innerHTML=''}
+
+/* ---------- dietary / access match display ---------- */
+function whoIsHereHtml(s){
+  const att=invited().filter(g=>(plan.itin[g.id]||[]).includes(s.id));
+  if(!att.length)return '<span style="color:var(--ink2)">nobody yet</span>';
+  const rows=att.map(g=>{
+    const dm=dietMatch(g,s),am=accessMatch(g,s);
+    const sev=dm?.status==='red'||am==='red'?'red':dm?.status==='yellow'||am==='yellow'?'yellow':dm?.status==='green'?'green':null;
+    const dot=sev?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${sev==='red'?'#c0392b':sev==='yellow'?'#e0a020':'#1F7A4D'};margin-right:4px;flex:none;vertical-align:middle"></span>`:'';
+    const notes=[dm?.status==='red'?'blocked: '+dm.labels.join(', '):dm?.status==='yellow'?'unverified: '+dm.labels.join(', '):'',am==='red'?'step-free required, not available':am==='yellow'?'step-free status unknown':''].filter(Boolean).join('; ');
+    return `<span style="display:inline-flex;align-items:center;margin:2px 10px 2px 0;white-space:nowrap" title="${esc(notes)}">${dot}${esc(g.n)}</span>`;
+  });
+  const reds=att.filter(g=>dietMatch(g,s)?.status==='red'||accessMatch(g,s)==='red').length;
+  const yellows=att.filter(g=>dietMatch(g,s)?.status==='yellow'||accessMatch(g,s)==='yellow').length;
+  const summary=reds||yellows?`<div style="margin-top:5px;font-size:11px">${reds?`<span style="color:#c0392b;font-weight:600">${reds} hard conflict${reds>1?'s':''}</span>`:''}${reds&&yellows?' · ':''}${yellows?`<span style="color:#b85c00">${yellows} need${yellows>1?'s':''} verification</span>`:''}</div>`:'';
+  return rows.join('')+summary;
+}
+
+/* ---------- drawer ---------- */
+let editing=null,pend=null;
+function editSlot(id){editing=id;pend=null;draw()}
+function addSlot(){const s={id:uid(),venue:'New partner',start:780,end:825,senses:[],status:'tentative',sizing:'flex',cap:null};
+  plan.slots.push(s);_vmap=null;editing=s.id;pend=null;save();render();draw()}
+function draw(){
+  if(!editing)return drawerHost.innerHTML='';
+  const s=slotById(editing);if(!s){editing=null;return drawerHost.innerHTML=''}
+  const w=whatIf(s);
+  const foodDefault=s.food!=null?s.food:(s.isLunch||(s.senses||[]).includes('Taste'));
+  const sec=(title,content,sub)=>`<div style="border-top:1px solid var(--rule);padding:16px 0 4px"><div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:${sub?'2px':'10px'}">${title}</div>${sub?`<div class="gsub" style="margin-bottom:10px">${sub}</div>`:''}${content}</div>`;
+  const costTypeBtns=['free','pre-paid','gift card','out-of-pocket'].map(type=>{
+    const active=(s.costType||'free')===type;
+    const tip=type==='free'?'No cost to the guest':type==='pre-paid'?'Covered by Ode upfront':type==='gift card'?'Paid via a partner gift card or voucher':'Guest pays on the day';
+    return `<button type="button" data-cost-type="${type}" title="${tip}" style="padding:4px 10px;font-family:var(--mono);font-size:10px;border-radius:3px;border:1px solid ${active?'var(--ink)':'var(--rule)'};background:${active?'var(--ink)':'var(--paper)'};color:${active?'var(--paper)':'var(--ink2)'};cursor:pointer;letter-spacing:.04em;text-transform:capitalize" onclick="setCostType('${s.id}','${type}')">${type}</button>`;
+  }).join('');
+  drawerHost.innerHTML=`<div class="scrim" onclick="closeD()"></div><div class="drawer">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px">Partner slot</div>
+        <div style="font-size:18px;font-weight:700;line-height:1.2">${esc(s.venue)}</div>
+      </div>
+      <span style="font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:3px;background:${s.status==='confirmed'?'#d6f0df':s.status==='dropped'?'#f0e0e0':'#f5f0e0'};color:${s.status==='confirmed'?'#1a6b2a':s.status==='dropped'?'#8b1a1a':'#7a5800'};margin-top:4px">${s.status}</span>
+    </div>
+
+    ${sec('Venue &amp; timing',`
+      <div class="field"><input id="e_v" value="${esc(s.venue)}" placeholder="Venue name"></div>
+      <div class="row2">
+        <div class="field" style="flex:1"><label class="eyebrow">Start</label><input id="e_a" value="${ti(s.start)}"></div>
+        <div class="field" style="flex:1"><label class="eyebrow">End</label><input id="e_b" value="${ti(s.end)}"></div>
+      </div>`)}
+
+    ${sec('Capacity &amp; status',`
+      <div class="row2">
+        <div class="field" style="flex:1"><label class="eyebrow">Capacity</label>
+          <select id="e_z" onchange="document.getElementById('cw').style.display=this.value==='all'?'none':'block';document.getElementById('cl').textContent=this.value==='capped'?'Hard cap':'Comfortable size (optional)'">
+            <option value="capped"${s.sizing==='capped'?' selected':''}>Hard cap</option>
+            <option value="flex"${s.sizing==='flex'?' selected':''}>Flexible</option>
+            <option value="all"${s.sizing==='all'?' selected':''}>Everyone</option>
+          </select>
+        </div>
+        <div class="field" id="cw" style="flex:1;display:${s.sizing==='all'?'none':'block'}">
+          <label class="eyebrow" id="cl">${s.sizing==='capped'?'Hard cap':'Size (optional)'}</label>
+          <input id="e_c" value="${s.cap||''}" placeholder="8">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field" style="flex:1"><label class="eyebrow">Status</label>
+          <select id="e_s">
+            <option value="confirmed"${s.status==='confirmed'?' selected':''}>Confirmed</option>
+            <option value="tentative"${s.status==='tentative'?' selected':''}>Tentative</option>
+            <option value="dropped"${s.status==='dropped'?' selected':''}>Dropped</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1"><label class="eyebrow">Open to</label>
+          <select id="e_g">
+            <option value=""${!s.gender?' selected':''}>Everyone</option>
+            <option value="Woman"${s.gender==='Woman'?' selected':''}>Women only</option>
+            <option value="Man"${s.gender==='Man'?' selected':''}>Men only</option>
+          </select>
+        </div>
+      </div>`)}
+
+    ${sec('Senses delivered',`
+      <div class="spick">
+        ${SENSES.map(x=>{const on=(s.senses||[]).includes(x);
+          return `<button aria-pressed="${on}" style="${on?'background:var(--'+x+');color:#fff;border-color:transparent':'color:var(--'+x+')'}" onclick="tog('${x}',this)">${x}</button>`}).join('')}
+      </div>`)}
+
+    ${sec('Food &amp; drink',`
+      <div class="field"><label class="eyebrow" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="e_lunch" style="width:14px;height:14px;cursor:pointer" ${s.isLunch?'checked':''}>
+        Lunch stop
+        <span class="flag" style="background:#fff3cd;border-color:#f0c040;color:#7a5800;font-size:10px">lunch</span></label>
+        <div class="gsub" style="margin-top:3px">One lunch stop per guest. Solver enforces automatically.</div>
+      </div>
+      <div class="field"><label class="eyebrow" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="e_food" style="width:14px;height:14px;cursor:pointer" ${foodDefault?'checked':''}
+          onchange="document.getElementById('e_diet_section').style.display=this.checked?'block':'none'">
+        Food or drink served here</label>
+        <div class="gsub" style="margin-top:3px">Enable for any stop with a tasting, snacks, or drinks.</div>
+      </div>
+      <div id="e_diet_section" style="display:${foodDefault?'block':'none'};margin-top:8px;padding-top:10px;border-top:1px solid var(--rule2)">
+        <div class="field"><label class="eyebrow">Can accommodate</label>
+          <div class="gsub" style="margin-bottom:6px">Partner confirmed they can serve these needs.</div>
+          <div class="spick">${DIETARY_LABELS.map(d=>{const on=(s.canAccommodate||[]).includes(d);
+            return `<button aria-pressed="${on}" style="${on?'background:#1F7A4D;color:#fff;border-color:transparent':''}" onclick="togDiet('can','${esc(d)}',this)">${esc(d)}</button>`}).join('')}</div>
+        </div>
+        <div class="field"><label class="eyebrow">Cannot accommodate</label>
+          <div class="gsub" style="margin-bottom:6px">Hard exclusions: shared fryer, cannot guarantee free-from, etc.</div>
+          <div class="spick">${DIETARY_LABELS.map(d=>{const on=(s.cannotAccommodate||[]).includes(d);
+            return `<button aria-pressed="${on}" style="${on?'background:#c0392b;color:#fff;border-color:transparent':''}" onclick="togDiet('cannot','${esc(d)}',this)">${esc(d)}</button>`}).join('')}</div>
+        </div>
+        <div class="field"><label class="eyebrow">Notes (organiser only)</label>
+          <input id="e_diet_notes" placeholder="e.g. can accommodate most needs with 48h notice" value="${esc(s.dietNotes||'')}">
+        </div>
+      </div>`)}
+
+    ${sec('Accessibility',`
+      <div class="row2">
+        <div class="field" style="flex:1"><label class="eyebrow">Step-free entrance</label>
+          <select id="e_step">
+            <option value=""${!s.stepFree?' selected':''}>Unknown</option>
+            <option value="yes"${s.stepFree==='yes'?' selected':''}>Yes</option>
+            <option value="partial"${s.stepFree==='partial'?' selected':''}>Partial</option>
+            <option value="no"${s.stepFree==='no'?' selected':''}>No</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1;display:flex;flex-direction:column;gap:8px;justify-content:flex-end;padding-bottom:2px">
+          <label class="eyebrow" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="e_elev" style="width:14px;height:14px;cursor:pointer" ${s.elevator==='yes'?'checked':''}> Elevator
+          </label>
+          <label class="eyebrow" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="e_rest" style="width:14px;height:14px;cursor:pointer" ${s.accessRestroom==='yes'?'checked':''}> Accessible restroom
+          </label>
+        </div>
+      </div>`)}
+
+    ${sec('Cost per guest',`
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">${costTypeBtns}</div>
+      <div class="row2">
+        <div class="field" style="flex:1">
+          <label class="eyebrow">Amount ($)</label>
+          <input id="e_cost" type="number" min="0" step="0.50" placeholder="0" value="${s.cost!=null?s.cost:''}"
+            ${(s.costType||'free')==='free'?'disabled style="opacity:.4"':''}
+            oninput="document.getElementById('cost_preview').innerHTML=drawerCostPreview()">
+        </div>
+        <div style="flex:1;font-size:11px;color:var(--ink3);padding-top:18px">Max $${BUDGET_CAP} total per guest across all stops.</div>
+      </div>
+      <div id="cost_preview">${(()=>{const att=invited().filter(g=>(plan.itin[g.id]||[]).includes(s.id));if(!att.length)return '';const over=att.filter(g=>overBudget(g));return over.length?`<div style="background:#fff5eb;border:1px solid #f0c070;border-radius:3px;padding:9px 12px;font-size:12px;margin-top:8px"><b style="color:#b85c00">&#9888; ${over.length} guest${over.length>1?'s':''} over $${BUDGET_CAP} budget</b><div class="gsub" style="margin-top:3px">${over.slice(0,4).map(g=>`${esc(g.n)} $${totalEventCost(g).toFixed(2)}`).join(' · ')}${over.length>4?' · ...':''}</div></div>`:'';})()}</div>`)}
+
+    ${sec('Guest disciplines',`
+      <div class="spick" id="e_disc_wrap">
+        ${DISCIPLINES.map(d=>{const on=(s.disciplines||[]).includes(d);
+          return `<button aria-pressed="${on}" style="${on?'background:var(--ink);color:#fff;border-color:transparent':''}" onclick="togDisc('${esc(d)}',this)">${esc(d)}</button>`}).join('')}
+      </div>`,'Leave all unselected = open to all disciplines.')}
+
+    ${sec('Impact &amp; guests',`
+      <div style="display:flex;gap:12px;margin-bottom:12px">
+        <div style="flex:1;background:var(--paper2,#f7f7f5);border-radius:4px;padding:10px 12px">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px">If this drops</div>
+          <div style="font-size:20px;font-weight:700">-${w.lost}</div>
+          <div class="gsub">sense hits${w.zero?' · '+w.zero+' to zero':''}</div>
+        </div>
+        <div style="flex:1;background:var(--paper2,#f7f7f5);border-radius:4px;padding:10px 12px">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px">Here now</div>
+          <div style="font-size:20px;font-weight:700">${w.n}</div>
+          <div class="gsub">guest${w.n===1?'':'s'} booked</div>
+        </div>
+      </div>
+      <div style="font-size:12px">${whoIsHereHtml(s)}</div>`)}
+    ${(()=>{
+      if(s.sizing==='all')return '';
+      const dur=s.end-s.start;
+      const senses=s.senses||[];
+      // only confirmed neighbours matter for commute reasoning
+      const confirmed=live().filter(x=>x.id!==s.id&&x.status==='confirmed');
+      const others=live().filter(x=>x.id!==s.id);
+
+      // collect all venue pairs involving this slot's venue that are assumed (not measured)
+      const assumedPairs=new Set();
+      confirmed.forEach(x=>{
+        const lb=leg(x.venue,s.venue);
+        const la=leg(s.venue,x.venue);
+        if(!lb.known) assumedPairs.add(esc(x.venue));
+        if(!la.known) assumedPairs.add(esc(x.venue));
+      });
+      const hasAssumed=assumedPairs.size>0;
+
+      // structural window scorer
+      const windows=[];
+      for(let a=T0;a<=T1-dur;a+=15){
+        if(a===s.start)continue;
+        const b=a+dur;
+
+        // clock overlap with any other live slot
+        const overlapping=others.filter(x=>a<x.end&&x.start<b);
+        // everyone-slots are a hard wall — any overlap with one makes this window invalid
+        const everyoneBlock=overlapping.filter(x=>x.sizing==='all');
+
+        // nearest confirmed neighbours within 90 min either side
+        const before=confirmed.filter(x=>x.end<=a&&a-x.end<=90).sort((x,y)=>y.end-x.end)[0];
+        const after=confirmed.filter(x=>x.start>=b&&x.start-b<=90).sort((x,y)=>x.start-y.start)[0];
+
+        // actual commute times (falls back to default if unset)
+        const legBefore=before?leg(before.venue,s.venue):{mins:0,known:true};
+        const legAfter=after?leg(s.venue,after.venue):{mins:0,known:true};
+        const gapBefore=before?a-before.end:dur;
+        const gapAfter=after?after.start-b:dur;
+
+        // travel tight = gap smaller than measured commute
+        const travelTightBefore=before&&gapBefore<legBefore.mins;
+        const travelTightAfter=after&&gapAfter<legAfter.mins;
+        const travelTight=travelTightBefore||travelTightAfter;
+
+        // commute slack on each side (how many spare minutes after travel)
+        const slackBefore=before?gapBefore-legBefore.mins:null;
+        const slackAfter=after?gapAfter-legAfter.mins:null;
+        const minSlack=Math.min(slackBefore??999,slackAfter??999);
+
+        // sense adjacency with confirmed neighbours only
+        const adjBefore=before&&senses.some(x=>(before.senses||[]).includes(x));
+        const adjAfter=after&&senses.some(x=>(after.senses||[]).includes(x));
+        const senseAdj=adjBefore||adjAfter;
+
+        // strict tier sort: everyone-block (T0, hard wall) > overlap-free (T1) > travel fits (T2) > sense clean (T3) > slack
+        const tierEveryone = everyoneBlock.length>0 ? -10000 : 0; // hard wall, always last
+        const tierOverlap  = overlapping.length===0 ? 10000 : 0;
+        const tierTravel   = travelTight ? 0 : 1000;
+        const tierSense    = senseAdj    ? 0 : 100;
+        const score = tierEveryone + tierOverlap + tierTravel + tierSense + Math.max(0, minSlack===999?0:minSlack);
+
+        const issues=[];
+        if(everyoneBlock.length) issues.push(`blocked — everyone attends ${everyoneBlock.map(x=>esc(x.venue)).join(', ')}`);
+        else if(overlapping.length) issues.push(`overlaps ${overlapping.map(x=>esc(x.venue)).join(', ')}`);
+        if(travelTightBefore&&before) issues.push(`${legBefore.mins}m to ${esc(before.venue)}, only ${gapBefore}m gap`);
+        if(travelTightAfter&&after) issues.push(`${legAfter.mins}m to ${esc(after.venue)}, only ${gapAfter}m gap`);
+        if(senseAdj) issues.push(`same senses adjacent to ${[adjBefore&&esc(before.venue),adjAfter&&esc(after.venue)].filter(Boolean).join('/')}`);
+
+        windows.push({a,b,overlapping:overlapping.length,everyoneBlock,senseAdj,minSlack,travelTight,score,issues,before,after,legBefore,legAfter,gapBefore,gapAfter,slackBefore,slackAfter});
+      }
+
+      windows.sort((x,y)=>y.score-x.score);
+      const top=windows.slice(0,6);
+      if(!top.length)return '';
+
+      // current window analysis
+      const curBefore=confirmed.filter(x=>x.end<=s.start&&s.start-x.end<=90).sort((x,y)=>y.end-x.end)[0];
+      const curAfter=confirmed.filter(x=>x.start>=s.end&&x.start-s.end<=90).sort((x,y)=>x.start-y.start)[0];
+      const curLegBefore=curBefore?leg(curBefore.venue,s.venue):{mins:0,known:true};
+      const curLegAfter=curAfter?leg(s.venue,curAfter.venue):{mins:0,known:true};
+      const curSlackBefore=curBefore?s.start-curBefore.end-curLegBefore.mins:null;
+      const curSlackAfter=curAfter?curAfter.start-s.end-curLegAfter.mins:null;
+      const curAdj=(curBefore&&senses.some(x=>(curBefore.senses||[]).includes(x)))||(curAfter&&senses.some(x=>(curAfter.senses||[]).includes(x)));
+
+      // helper: render one commute leg as a structured line
+      function commuteLine(from,fromLabel,toLabel,legData,gap,slack,isTentative){
+        const tight=gap<legData.mins;
+        const slackColor=tight?'#c0392b':slack>=15?'#1a6b2a':'#b85c00';
+        const opacity=isTentative?'opacity:.55':'';
+        return `<div style="display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;${opacity}">
+          <span style="font-weight:600;white-space:nowrap">${fromLabel}</span>
+          <span style="font-size:16px;line-height:1;color:var(--ink2)">&#8594;</span>
+          <span style="font-family:var(--mono);font-size:11px;color:${slackColor};white-space:nowrap">${legData.mins}m${legData.known?'':'*'}</span>
+          <span style="font-size:16px;line-height:1;color:var(--ink2)">&#8594;</span>
+          <span style="font-weight:600;white-space:nowrap">${toLabel}</span>
+          <span style="font-family:var(--mono);font-size:11px;color:${slackColor};margin-left:4px;white-space:nowrap">${tight?'too tight':`${slack}m slack`}</span>
+        </div>`;
+      }
+
+      // current window neighbour summary
+      const curBeforeTent=!curBefore?live().filter(x=>x.id!==s.id&&x.status==='tentative'&&x.end<=s.start&&s.start-x.end<=90).sort((x,y)=>y.end-x.end)[0]:null;
+      const curAfterTent=!curAfter?live().filter(x=>x.id!==s.id&&x.status==='tentative'&&x.start>=s.end&&x.start-s.end<=90).sort((x,y)=>x.start-y.start)[0]:null;
+
+      return `<div style="margin-top:18px;margin-bottom:4px">
+        <button type="button" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden;this.querySelector('.aw-arrow').textContent=this.nextElementSibling.hidden?'▸':'▾'" style="display:flex;align-items:center;gap:8px;width:100%;text-align:left;margin-bottom:6px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:7px 10px;cursor:pointer" title="Show or hide alternative time windows for this slot">
+          <span class="eyebrow" style="margin:0">Alternative windows</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">${top.length} option${top.length===1?'':'s'}</span>
+          <span class="aw-arrow" style="font-size:11px;color:var(--ink3);margin-left:auto">▸</span>
+        </button>
+        <div hidden>
+        ${hasAssumed?`<div style="background:#fff8f0;border:1px solid #f0c070;border-radius:3px;padding:9px 12px;margin-bottom:10px;font-size:12px">
+          <b>Transit times not set</b> for: ${[...assumedPairs].join(', ')}. Commute ranking is using a ${DEFAULT_LEG}-min placeholder. Distances may look clean but are not real.
+          <div style="margin-top:6px"><button class="btn sm" onclick="closeD();tab='transit';render()">Set real times in Transit tab, then come back</button></div>
+        </div>`:''}
+        <p class="note" style="margin-bottom:10px">Ranked by: no clock overlap, commute fits confirmed neighbours, no same-sense back-to-back. Confirmed neighbours shown bold; tentative dimmed.</p>
+        <table class="ledger">
+        ${top.map((r,i)=>{
+          const clean=!r.overlapping&&!r.senseAdj&&!r.travelTight;
+          const isBest=i===0;
+          // quality label and colour based on what's actually wrong
+          let qualLabel,qualColor,qualBg;
+          if(r.everyoneBlock&&r.everyoneBlock.length){qualLabel='blocked';qualColor='#fff';qualBg='#7a22cc';}
+          else if(r.overlapping){qualLabel='conflict';qualColor='#fff';qualBg='#c0392b';}
+          else if(r.travelTight){qualLabel='tight';qualColor='#fff';qualBg='#b85c00';}
+          else if(r.senseAdj){qualLabel='adj';qualColor='#555';qualBg='#e8e4d0';}
+          else if(r.minSlack>=30){qualLabel='best fit';qualColor='#fff';qualBg='#1a6b2a';}
+          else if(r.minSlack>=10){qualLabel='good';qualColor='#1a6b2a';qualBg='#d6f0df';}
+          else{qualLabel='tight-ish';qualColor='#555';qualBg='#ececea';}
+
+          // also find tentative neighbours for this window
+          const tentBefore=!r.before?live().filter(x=>x.id!==s.id&&x.status==='tentative'&&x.end<=r.a&&r.a-x.end<=90).sort((x,y)=>y.end-x.end)[0]:null;
+          const tentAfter=!r.after?live().filter(x=>x.id!==s.id&&x.status==='tentative'&&x.start>=r.b&&x.start-r.b<=90).sort((x,y)=>x.start-y.start)[0]:null;
+          const tentLegBefore=tentBefore?leg(tentBefore.venue,s.venue):{mins:0,known:true};
+          const tentLegAfter=tentAfter?leg(s.venue,tentAfter.venue):{mins:0,known:true};
+          const tentSlackBefore=tentBefore?r.a-tentBefore.end-tentLegBefore.mins:null;
+          const tentSlackAfter=tentAfter?tentAfter.start-r.b-tentLegAfter.mins:null;
+
+          return `<tr style="border-top:1px solid var(--rule2);${isBest?'background:#f5faf6':''}">
+            <td style="padding:8px 6px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+                <span style="font-size:14px;font-weight:700">${hhmm(r.a)}&ndash;${hhmm(r.b)}</span>
+                <span style="font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:${qualBg};color:${qualColor};text-transform:uppercase">${qualLabel}</span>
+                ${isBest?`<span style="font-size:10px;color:var(--ink3);font-family:var(--mono)">← top pick</span>`:''}
+              </div>
+              ${r.before?commuteLine(r.before,esc(r.before.venue),'here',r.legBefore,r.gapBefore,r.slackBefore,false):''}
+              ${r.after?commuteLine(r.after,'here',esc(r.after.venue),r.legAfter,r.gapAfter,r.slackAfter,false):''}
+              ${tentBefore?commuteLine(tentBefore,esc(tentBefore.venue)+' (tent.)','here',tentLegBefore,r.a-tentBefore.end,tentSlackBefore,true):''}
+              ${tentAfter?commuteLine(tentAfter,'here',esc(tentAfter.venue)+' (tent.)',tentLegAfter,tentAfter.start-r.b,tentSlackAfter,true):''}
+              ${!r.before&&!r.after&&!tentBefore&&!tentAfter?`<div class="gsub" style="margin-top:3px">no neighbours within 90 min</div>`:''}
+              ${r.issues.length?`<div style="font-size:11px;color:#b85c00;margin-top:4px">${r.issues.join(' · ')}</div>`:''}
+            </td>
+            <td style="text-align:right;vertical-align:top;padding:10px 0 0 8px;white-space:nowrap">
+              <button class="btn sm${isBest?' solid':''}" style="margin-top:2px" onclick="document.getElementById('e_a').value='${ti(r.a)}';document.getElementById('e_b').value='${ti(r.b)}'">Move here</button>
+            </td></tr>`;
+        }).join('')}
+        </table>
+        </div></div>`;
+    })()}
+    <div style="display:flex;gap:8px;margin-top:18px"><button class="btn solid" onclick="saveSlot()">Save</button>
+      <button class="btn" title="Close without saving changes to this slot" onclick="closeD()">Cancel</button>
+      <button class="btn" style="margin-left:auto" title="Permanently remove this partner slot from the day" onclick="delSlot()">Remove</button></div>
+    <button class="btn" style="width:100%;margin-top:10px" title="Save changes to this slot and immediately re-run the solver to update all guest routes" onclick="saveSlot(true)">Save and re-plan the day</button></div>`;
+}
+function drawerCostPreview(){
+  const s=slotById(editing);if(!s)return '';
+  const raw=parseFloat(document.getElementById('e_cost')&&document.getElementById('e_cost').value)||s.cost||0;
+  const att=invited().filter(g=>(plan.itin[g.id]||[]).includes(s.id));
+  if(!att.length)return '';
+  const over=att.filter(g=>{const vc=itin(g).reduce((n,x)=>n+(x.id===s.id?raw:(x.cost||0)),0);return +vc.toFixed(2)>BUDGET_CAP;});
+  if(!over.length)return `<div style="background:#f0faf3;border:1px solid #9ed0b0;border-radius:3px;padding:7px 12px;font-size:12px;margin-bottom:10px;color:#1f5c38">All ${att.length} guests stay within $${BUDGET_CAP} ✓</div>`;
+  return `<div style="background:#fff5eb;border:1px solid #f0c070;border-radius:3px;padding:9px 12px;font-size:12px;margin-bottom:10px"><b style="color:#b85c00">⚠ ${over.length} guest${over.length>1?'s':''} over $${BUDGET_CAP} with this cost</b><div class="gsub" style="margin-top:3px">${over.slice(0,4).map(g=>esc(g.n)).join(' · ')}${over.length>4?' · …':''}</div></div>`;
+}
+function tog(x,b){const s=slotById(editing);pend=pend||[...(s.senses||[])];const i=pend.indexOf(x);
+  if(i<0){pend.push(x);b.setAttribute('aria-pressed','true');b.style.cssText='background:var(--'+x+');color:#fff;border-color:transparent'}
+  else{pend.splice(i,1);b.setAttribute('aria-pressed','false');b.style.cssText='color:var(--'+x+')'}}
+let pendDisc=null;
+function togDisc(d,b){const s=slotById(editing);pendDisc=pendDisc||[...(s.disciplines||[])];const i=pendDisc.indexOf(d);
+  if(i<0){pendDisc.push(d);b.setAttribute('aria-pressed','true');b.style.cssText='background:var(--ink);color:#fff;border-color:transparent'}
+  else{pendDisc.splice(i,1);b.setAttribute('aria-pressed','false');b.style.cssText=''}}
+let pendCan=null,pendCannot=null;
+function togDiet(type,d,b){
+  const s=slotById(editing);
+  if(type==='can'){
+    pendCan=pendCan||[...(s.canAccommodate||[])];const i=pendCan.indexOf(d);
+    if(i<0){pendCan.push(d);b.setAttribute('aria-pressed','true');b.style.cssText='background:#1F7A4D;color:#fff;border-color:transparent'}
+    else{pendCan.splice(i,1);b.setAttribute('aria-pressed','false');b.style.cssText=''}
+  }else{
+    pendCannot=pendCannot||[...(s.cannotAccommodate||[])];const i=pendCannot.indexOf(d);
+    if(i<0){pendCannot.push(d);b.setAttribute('aria-pressed','true');b.style.cssText='background:#c0392b;color:#fff;border-color:transparent'}
+    else{pendCannot.splice(i,1);b.setAttribute('aria-pressed','false');b.style.cssText=''}
+  }
+}
+function setCostType(sid,type){
+  const s=slotById(sid);if(!s)return;
+  s.costType=type;
+  // Re-render just the drawer so button states update
+  const inp=document.getElementById('e_cost');
+  if(inp){inp.disabled=(type==='free');inp.style.opacity=(type==='free')?'0.4':'1';}
+  // Update button states inline without full re-render
+  const btns=document.querySelectorAll('[data-cost-type]');
+  btns.forEach(b=>{
+    const active=b.dataset.costType===type;
+    b.style.background=active?'var(--ink)':'var(--paper)';
+    b.style.color=active?'var(--paper)':'var(--ink2)';
+    b.style.borderColor=active?'var(--ink)':'var(--rule)';
+  });
+  save();
+}
+function saveSlot(replan){const s=slotById(editing);
+  s.venue=e_v.value.trim()||'Untitled';
+  s.start=Math.max(T0,Math.min(T1-15,pt(e_a.value)??s.start));
+  s.end=Math.max(s.start+15,Math.min(T1,pt(e_b.value)??s.end));
+  s.status=e_s.value;s.sizing=e_z.value;s.cap=s.sizing==='all'?null:(parseInt(e_c.value)||(s.sizing==='capped'?6:null));
+  s.gender=e_g.value||null;
+  s.isLunch=!!(document.getElementById('e_lunch')&&document.getElementById('e_lunch').checked);
+  s.food=!!(document.getElementById('e_food')&&document.getElementById('e_food').checked);
+  s.canAccommodate=pendCan||s.canAccommodate||[];
+  s.cannotAccommodate=pendCannot||s.cannotAccommodate||[];
+  s.dietNotes=(document.getElementById('e_diet_notes')&&document.getElementById('e_diet_notes').value.trim())||'';
+  s.stepFree=(document.getElementById('e_step')&&document.getElementById('e_step').value)||null;
+  s.elevator=(document.getElementById('e_elev')&&document.getElementById('e_elev').checked)?'yes':'no';
+  s.accessRestroom=(document.getElementById('e_rest')&&document.getElementById('e_rest').checked)?'yes':'no';
+  const rawCost=parseFloat(document.getElementById('e_cost')&&document.getElementById('e_cost').value);
+  s.cost=isNaN(rawCost)||rawCost<=0?null:+rawCost.toFixed(2);
+  // costType is set live by setCostType(); if 'free', zero out cost
+  if(s.costType==='free')s.cost=null;
+  if(pend)s.senses=pend;
+  s.disciplines=pendDisc||s.disciplines||[];
+  _vmap=null;closeD();save();replan?tionti():render()}
+function delSlot(){plan.slots=plan.slots.filter(x=>x.id!==editing);_vmap=null;
+  Object.keys(plan.itin).forEach(k=>plan.itin[k]=plan.itin[k].filter(i=>i!==editing));closeD();save();render()}
+function closeD(){editing=null;pend=null;pendDisc=null;pendCan=null;pendCannot=null;drawerHost.innerHTML=''}
+
+/* ---------- actions ---------- */
+function setStatus2(id,v){slotById(id).status=v;save();render()}
+function setGuest(id,v){gst(id).status=v;if(v!=='invited')delete plan.itin[id];save();render()}
+
+function sample(n){seedSample(n);tionti()}
+function resetPlan(){plan=defaultPlan();_vmap=null;sampleAllInterested();tionti()}
+function exportPlan(){
+  const payload = {app:'raisondetre-day-planner', version:3, savedAt:new Date().toISOString(), plan, guests:GUESTS};
+  const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  const stamp=new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+  a.download=`raisondetre-plan-${stamp}.json`; a.click();
+}
+function exportItinerariesJSON(){
+  // Produce one record per guest containing their ordered stops with
+  // full detail needed by the backend to build each guest's private website page.
+  const toTime=m=>{const h=Math.floor(m/60),mn=m%60;return String(h).padStart(2,'0')+':'+String(mn).padStart(2,'0')};
+  const records=invited().map(g=>{
+    const stops=itin(g); // sorted by start time (itin() does this)
+    const stopObjs=stops.map((s,i)=>{
+      const prevStop=i>0?stops[i-1]:null;
+      const commuteIn=prevStop?leg(prevStop.venue,s.venue):null;
+      const nextStop=i<stops.length-1?stops[i+1]:null;
+      const commuteOut=nextStop?leg(s.venue,nextStop.venue):null;
+      const stopCostNum=slotCost(s);
+      // Transit cost for the leg into this stop
+      const legCostIn=commuteIn?legCost({mode:commuteIn.mode,mins:commuteIn.mins,miles:commuteIn.miles||null}):0;
+      return {
+        stop_number: i+1,
+        venue: s.venue,
+        senses: s.senses||[],
+        start_time: toTime(s.start),
+        end_time: toTime(s.end),
+        duration_min: s.end-s.start,
+        is_lunch: s.isLunch||false,
+        is_shared: s.sizing==='all',
+        status: s.status,
+        cost_usd: stopCostNum||null,
+        commute_from_previous: prevStop?{
+          from_venue: prevStop.venue,
+          duration_min: commuteIn.mins,
+          mode: commuteIn.mode,
+          cost_usd: +legCostIn.toFixed(2)||null,
+          measured: commuteIn.known,
+        }:null,
+        commute_to_next: nextStop?{
+          to_venue: nextStop.venue,
+          duration_min: commuteOut.mins,
+          mode: commuteOut.mode,
+          measured: commuteOut.known,
+        }:null,
+      };
+    });
+    return {
+      guest_id: g.id,
+      guest_name: g.n,
+      senses: g.s,
+      disciplines: parseDiscs(g.f),
+      access_labels: g.accessLabels||[],
+      diet_labels: g.dietLabels||[],
+      total_transit_cost_usd: transitCost(g),
+      total_stop_cost_usd: +venueCost(g).toFixed(2),
+      stops: stopObjs,
+    };
+  });
+  const payload={
+    export_type:'guest_itineraries',
+    version:1,
+    exported_at:new Date().toISOString(),
+    event:'Raison d\'Etre 2026',
+    event_date:'2026-11-14',
+    loop_start:'11:00',
+    loop_end:'16:00',
+    guest_count:records.length,
+    itineraries:records,
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  const stamp=new Date().toISOString().slice(0,10);
+  a.download=`raisondetre-itineraries-${stamp}.json`;a.click();
+}
+/* ---------- guest CSV import ---------- */
+function parseGuestCSV(text){
+  // Normalize line endings and split into rows, respecting quoted newlines
+  const raw=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  // Split into rows while respecting quoted fields.
+  // IMPORTANT: quote characters must be preserved in cur so that parseRow below
+  // can still see them and correctly handle commas inside quoted fields.
+  const rows=[];let cur='',inQ=false;
+  for(let i=0;i<raw.length;i++){
+    const c=raw[i];
+    if(c==='"'){
+      if(inQ&&raw[i+1]==='"'){cur+='""';i++;}  // escaped quote → keep both chars
+      else{inQ=!inQ;cur+=c;}                    // open/close quote → keep the char
+    } else if(c==='\n'&&!inQ){rows.push(cur);cur='';}
+    else cur+=c;
+  }
+  if(cur.trim())rows.push(cur);
+  if(rows.length<2)return[];
+
+  function parseRow(line){
+    const cols=[];let cell='',q=false;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='"'){if(q&&line[i+1]==='"'){cell+='"';i++;}else q=!q;}
+      else if(c===','&&!q){cols.push(cell.trim());cell='';}
+      else cell+=c;
+    }
+    cols.push(cell.trim());return cols;
+  }
+
+  const headers=parseRow(rows[0]).map(h=>h.toLowerCase().trim());
+  const idx=name=>headers.indexOf(name.toLowerCase().trim());
+  const get=(row,i)=>i>=0&&i<row.length?row[i].trim():'';
+
+  const iGN =idx('guest number');
+  if(iGN<0)return[]; // wrong file format
+
+  const iPA =idx('perspective anchor');
+  const iInt=idx('interest');
+  const iSE =idx('sense exploration');
+  const iPer=idx('perspective');
+  // handle typo 'pespective other' and correct spelling
+  const iPO =idx('pespective other')>=0?idx('pespective other'):idx('perspective other');
+  const iDoA=idx('dietary or accessibility');
+  const iAL =idx('accessibility labels'); // header may have trailing space — trimmed above
+  const iDN =idx('dietary notes');
+  const iDL =idx('dietary labels');
+  const iRR =idx('registration readiness');
+  const iCon=idx('consent');
+  const iCls=idx('classification');
+  const iSt =idx('status'); // optional: interested | invited | paid | requested
+
+  const guests=[];
+  for(let i=1;i<rows.length;i++){
+    if(!rows[i].trim())continue;
+    const row=parseRow(rows[i]);
+    const gn=get(row,iGN);if(!gn)continue;
+
+    const sRaw=get(row,iSE);
+    const sArr=sRaw?sRaw.split(',').map(s=>s.trim()).filter(s=>SENSES.includes(s)):[];
+
+    const dlRaw=get(row,iDL);
+    const dlArr=dlRaw?dlRaw.split(',').map(d=>d.trim()).filter(Boolean):[];
+
+    const alRaw=get(row,iAL);
+    const alArr=alRaw?alRaw.split(',').map(a=>a.trim()).filter(Boolean):[];
+
+    guests.push({
+      id:gn.toLowerCase(),n:gn,
+      p:get(row,iPA),
+      interest:get(row,iInt),
+      // parseDiscs normalises the field: disciplines with internal commas
+      // (e.g. "Film, photography, and media") are matched against the known
+      // list longest-first so they are never split mid-name.
+      s:sArr,f:parseDiscs(get(row,iPer)).join(',')||get(row,iPer),fo:get(row,iPO),
+      accessLabels:alArr,
+      dietNotes:get(row,iDN),
+      dietLabels:dlArr,
+      regReady:get(row,iRR),
+      consent:get(row,iCon),
+      cls:get(row,iCls),
+      st:(()=>{
+        // Status column takes priority if present and valid
+        const VALID_STATUSES=['interested','invited','paid','requested'];
+        const raw=get(row,iSt).toLowerCase().trim();
+        if(raw&&VALID_STATUSES.includes(raw))return raw;
+        // Fall back to Registration Readiness
+        return get(row,iRR)==='Yes'?'invited':'requested';
+      })(),
+      // legacy fields — empty for CSV guests
+      d:'',r:alArr.length>0?1:0,e:'',c:'',a:'',
+    });
+  }
+  return guests;
+}
+function loadGuestCSV(file){
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    const incoming=parseGuestCSV(r.result);
+    if(!incoming.length){alert('No guests found. Check that the file has a "Guest Number" header row and matches the schema.');return;}
+
+    // --- Merge mode: keep paths, replace SG placeholders with real guests ---
+    // 1. Build the live path map so we know which slots each path uses
+    const {labelMap,pathSlots}=livePathMap();
+
+    // 2. For each path, compute the senses it covers (union of all slot senses)
+    const pathSenses={};
+    Object.entries(pathSlots).forEach(([label,ids])=>{
+      const senses=new Set();
+      ids.forEach(id=>{const s=slotById(id);if(s)s.senses.forEach(x=>senses.add(x));});
+      pathSenses[label]=senses;
+    });
+
+    // 3. Score each incoming guest against each path: # senses in common
+    function senseFit(g,label){
+      const ps=pathSenses[label];if(!ps)return 0;
+      return g.s.filter(x=>ps.has(x)).length;
+    }
+
+    // 4. Build the list of invited-slot guest IDs (the 25 SG placeholders)
+    const invitedIds=invited().map(g=>g.id); // e.g. ['g2','g5',...]
+    // Sort by path label so we fill P1 first
+    invitedIds.sort((a,b)=>{
+      const pa=parseInt((labelMap[a]||'P999').slice(1));
+      const pb=parseInt((labelMap[b]||'P999').slice(1));
+      return pa-pb;
+    });
+
+    // 5. Greedy assignment: for each path slot (invited guest), pick the best-fit
+    //    remaining incoming guest by sense overlap, then by Registration Readiness
+    const pool=incoming.slice(); // mutable copy
+    const assignment={}; // invitedId → incoming guest
+
+    invitedIds.forEach(iid=>{
+      const pathLabel=labelMap[iid]||'';
+      if(!pool.length)return;
+      // Score all remaining pool guests against this path
+      const scored=pool.map((g,i)=>({g,i,score:senseFit(g,pathLabel)*10+(g.regReady==='Yes'?5:0)+(g.cls?3:0)}));
+      scored.sort((a,b)=>b.score-a.score);
+      const best=scored[0];
+      assignment[iid]=best.g;
+      pool.splice(best.i,1);
+    });
+
+    // 6. Apply: replace each invited SG guest with the matched real guest,
+    //    preserving the itin slot assignments and path mappings
+    const newGuests=GUESTS.map(sg=>{
+      const real=assignment[sg.id];
+      if(!real)return sg; // no match — keep SG placeholder
+      return {
+        ...real,
+        id:sg.id,  // keep the same internal ID so itin references are unchanged
+        // st comes directly from the CSV (Status column, or Registration Readiness fallback)
+        e:'',
+      };
+    });
+    // Add remaining pool guests — status already set by parseGuestCSV
+    pool.forEach((g,i)=>{
+      newGuests.push({...g,id:'csv'+(i+1),e:''});
+    });
+
+    const readyN=newGuests.filter(g=>g.st==='invited').length;
+    const poolN2=newGuests.filter(g=>g.st==='requested').length;
+    if(!confirm(`Merge ${incoming.length} guests from CSV into the current plan?\n\n• ${invitedIds.length} path slots filled with best-fit guests\n• ${readyN} marked Invited (Registration Readiness: Yes)\n• ${poolN2} in pool (not yet ready)\n\nPaths and itineraries are unchanged.`))return;
+
+    GUESTS=newGuests;
+    _vmap=null;
+    gFilter='all'; // show everything after load so nothing looks missing
+    tab='guests';   // switch to Guests tab so you see the result immediately
+    render();
+    document.getElementById('loadGuestInput').value='';
+  };
+  r.onerror=()=>alert('Could not read that file.');
+  r.readAsText(file);
+}
+
+function importPlan(file){
+  if(!file) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    let data;
+    try{ data=JSON.parse(r.result); }catch(e){ alert('That file is not readable JSON.'); return; }
+    const incoming = data && data.plan ? data.plan : data; // accept a raw plan object too
+    if(!incoming || !Array.isArray(incoming.slots)){ alert("That doesn't look like a plan file for this planner."); return; }
+    if(!confirm('Load this plan? It replaces everything currently on screen (autosave included).')) return;
+    plan = incoming; _vmap=null;
+    plan.modes = plan.modes && plan.modes.length ? plan.modes : DEFAULT_MODES.slice();
+    plan.legs = plan.legs || {}; plan.gs = plan.gs || {}; plan.itin = plan.itin || {};
+    // Restore guests if the plan file includes them
+    if(Array.isArray(data.guests) && data.guests.length){
+      GUESTS = data.guests;
+    } else if(Object.keys(plan.itin||{}).length){
+      // Old plan JSON: no guests array but itin has IDs — synthesise placeholders
+      // so the braid shows paths immediately. CSV load will replace them.
+      const allIds=new Set([...Object.keys(plan.itin),...Object.keys(plan.gs||{})]);
+      GUESTS=[];
+      let n=1;
+      allIds.forEach(id=>{
+        const gs=plan.gs[id]||{};
+        GUESTS.push({id,n:'SG'+n++,e:'',c:'',a:'',s:[],d:'',r:0,f:'',
+          st:gs.status==='invited'?'invited':gs.status==='paid'?'paid':'invited'});
+      });
+    }
+    save(); fitWindow();
+    if(!Object.keys(plan.itin).length && GUESTS.length) tionti();
+    else render();
+    document.getElementById('loadPlanInput').value='';
+  };
+  r.onerror=()=>alert('Could not read that file.');
+  r.readAsText(file);
+}
+function exportCSV(){
+  const rows=[['Guest','Time','Venue','Senses','Access','Dietary Labels','Dietary Notes']];
+  invited().forEach(g=>itin(g).forEach(s=>rows.push([
+    g.n,
+    hhmm(s.start)+'–'+hhmm(s.end),
+    s.venue,
+    (s.senses||[]).join(' '),
+    g.accessLabels!=null?g.accessLabels.join(', '):(accessFlag(g)?g.d:''),
+    g.dietLabels!=null?g.dietLabels.join(', '):'',
+    g.dietNotes||'',
+  ])));
+  const csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='day-rosters.csv';a.click()}
+
+/* ---------- boot ---------- */
+let tab='day';
+let _metricsSection=null;
+function viewMetrics(){
+  const inv=invited();
+  const paid=GUESTS.filter(g=>g.st==='paid');
+  const focus=inv.length?inv:paid; // use invited if available, else paid
+  if(!focus.length)return `<div class="panel"><h2>No guests in plan</h2><p class="note">Load guests and run the solver first, then come back here.</p></div>`;
+
+  // --- Sense coverage ---
+  const senseHits=SENSES.map(s=>({
+    sense:s,
+    guests:focus.filter(g=>g.s.includes(s)).length,         // guests who want this sense
+    covered:focus.filter(g=>g.s.includes(s)&&itin(g).some(sl=>sl.senses.includes(s))).length, // guests whose itin delivers it
+    slots:live().filter(sl=>sl.senses.includes(s)).length,  // slots delivering this sense
+  }));
+  const avgCoverage=focus.length?(focus.reduce((n,g)=>n+hitCount(g)/Math.max(g.s.length,1),0)/focus.length*100).toFixed(0):0;
+  const zeroGuests=focus.filter(g=>hitCount(g)===0);
+
+  // --- Perspectives ---
+  const perspCounts={};
+  focus.forEach(g=>{if(g.p)perspCounts[g.p]=(perspCounts[g.p]||0)+1;});
+
+  // --- Disciplines ---
+  const discCounts={};
+  focus.forEach(g=>(g.f||'').split(',').map(d=>d.trim()).filter(Boolean).forEach(d=>{discCounts[d]=(discCounts[d]||0)+1;}));
+  const topDiscs=Object.entries(discCounts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+  // --- Dietary & access ---
+  const dietCounts={};
+  focus.forEach(g=>(g.dietLabels||[]).forEach(d=>{dietCounts[d]=(dietCounts[d]||0)+1;}));
+  const accessGuests=focus.filter(g=>(g.accessLabels||[]).length>0||(g.d||'').length>0);
+  const accessCounts={};
+  focus.forEach(g=>(g.accessLabels||[]).forEach(a=>{accessCounts[a]=(accessCounts[a]||0)+1;}));
+
+  // --- Transit & cost ---
+  const assumed=assumedLegs();
+  const overBgt=focus.filter(g=>overBudget(g));
+  const transitCosts=focus.map(g=>transitCost(g)).filter(n=>n>0);
+  const avgTransit=transitCosts.length?(transitCosts.reduce((a,b)=>a+b,0)/transitCosts.length).toFixed(2):0;
+
+  // --- Slot summary ---
+  const allSlots=plan.slots;
+  const confirmed=allSlots.filter(s=>s.status==='confirmed');
+  const tentative=allSlots.filter(s=>s.status==='tentative');
+
+  // --- Paths ---
+  const pm=livePathMap();
+  const pathGroups=Object.entries(pm.pathSlots||{});
+
+  const mSec=(id,title,sub,content)=>`<div id="ms-${id}" style="margin-bottom:32px">
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px">${title}</div>
+    ${sub?`<div class="gsub" style="margin-bottom:12px">${sub}</div>`:''}
+    ${content}
+  </div>`;
+
+  const bar=(val,max,color)=>`<div style="height:8px;border-radius:3px;background:var(--rule);overflow:hidden;flex:1"><div style="height:100%;width:${max?Math.round(val/max*100):0}%;background:${color};border-radius:3px;transition:width .3s"></div></div>`;
+
+  const statCard=(label,value,sub,color)=>`<div style="background:var(--paper2,#f7f7f5);border-radius:6px;padding:14px 16px;flex:1;min-width:120px">
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">${label}</div>
+    <div style="font-size:28px;font-weight:700;color:${color||'var(--ink)'};line-height:1">${value}</div>
+    ${sub?`<div class="gsub" style="margin-top:4px">${sub}</div>`:''}
+  </div>`;
+
+  return `<div style="max-width:860px;padding:0 0 40px">
+    <h2 style="margin:0 0 4px">Key Metrics</h2>
+    <p class="note" style="margin-bottom:28px">Live snapshot for ${focus.length} ${inv.length?'invited':'paid'} guests. Updates every time you re-plan.</p>
+
+    ${mSec('guests','Guest summary',null,`
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+        ${statCard('Total in plan',focus.length,null)}
+        ${statCard('Paid',paid.length,null,'#1a6b2a')}
+        ${statCard('Invited',GUESTS.filter(g=>g.st==='invited').length,null)}
+        ${statCard('In pool',GUESTS.filter(g=>g.st==='requested'||g.st==='interested').length,'not yet assigned')}
+      </div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        ${Object.entries(perspCounts).map(([p,n])=>`<div style="text-align:center"><div style="font-size:22px;font-weight:700">${n}</div><div class="gsub">${p}</div></div>`).join('')}
+      </div>`)}
+
+    ${mSec('sense-coverage','Sense coverage',`Average ${avgCoverage}% of each guest\'s declared senses are delivered by their itinerary.`,`
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+        ${statCard('Avg coverage',avgCoverage+'%',null,+avgCoverage>=80?'#1a6b2a':+avgCoverage>=60?'#b85c00':'#c0392b')}
+        ${statCard('No match',zeroGuests.length,'guests with zero sense overlap',zeroGuests.length>0?'#c0392b':'#1a6b2a')}
+      </div>
+      <table class="ledger" style="width:100%">
+        <tr><th>Sense</th><th>Guests want it</th><th>Coverage</th><th style="text-align:right">Slots</th></tr>
+        ${senseHits.sort((a,b)=>b.guests-a.guests).map(({sense,guests,covered,slots})=>{
+          const pct=guests?Math.round(covered/guests*100):0;
+          return `<tr>
+            <td><span style="color:var(--${sense});font-weight:600">${sense}</span></td>
+            <td style="font-family:var(--mono)">${guests}</td>
+            <td style="min-width:160px"><div style="display:flex;align-items:center;gap:8px"><span style="font-family:var(--mono);font-size:11px;min-width:32px">${pct}%</span>${bar(covered,guests,'var(--'+sense+')')}</div></td>
+            <td style="text-align:right;font-family:var(--mono)">${slots}</td>
+          </tr>`;
+        }).join('')}
+      </table>
+      ${zeroGuests.length?`<div style="margin-top:12px;background:#fff0f0;border:1px solid #f0c0c0;border-radius:4px;padding:10px 14px;font-size:12px"><b style="color:#c0392b">Guests with no sense match:</b> ${zeroGuests.map(g=>esc(g.n)).join(', ')}</div>`:''}`)}
+
+    ${mSec('disciplines','Disciplines represented',`Breakdown of professional backgrounds across the ${focus.length} guests in the plan.`,`
+      <table class="ledger" style="width:100%">
+        ${topDiscs.map(([d,n])=>`<tr><td>${esc(d)}</td><td style="min-width:140px">${bar(n,focus.length,'var(--ink)')}</td><td style="font-family:var(--mono);text-align:right">${n}</td></tr>`).join('')}
+      </table>`)}
+
+    ${mSec('capacity','Slot capacity',`${confirmed.length} confirmed, ${tentative.length} tentative across ${allSlots.length} total slots.`,`
+      <table class="ledger" style="width:100%">
+        <tr><th>Venue</th><th>Status</th><th>Senses</th><th style="text-align:right">Headcount / Cap</th></tr>
+        ${allSlots.map(s=>{
+          const hc=headcount(s);const cap=capOf(s);const over=hc>cap;
+          return `<tr style="${over?'background:#fff5f5':''}">
+            <td><b>${esc(s.venue)}</b></td>
+            <td><span style="font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:2px;background:${s.status==='confirmed'?'#d6f0df':s.status==='dropped'?'#f0e0e0':'#f5f0e0'};color:${s.status==='confirmed'?'#1a6b2a':s.status==='dropped'?'#8b1a1a':'#7a5800'}">${s.status}</span></td>
+            <td style="font-size:11px">${(s.senses||[]).map(x=>`<span style="color:var(--${x})">${x}</span>`).join(', ')}</td>
+            <td style="text-align:right;font-family:var(--mono)">${hc}${cap<9999?' / '+cap:''}${over?` <span style="color:#c0392b">over</span>`:''}</td>
+          </tr>`;
+        }).join('')}
+      </table>`)}
+
+    ${mSec('dietary','Dietary &amp; access needs',`${accessGuests.length} guest${accessGuests.length===1?'':' s'} with access or dietary requirements.`,`
+      ${Object.keys(dietCounts).length?`<div style="margin-bottom:16px">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px">Dietary</div>
+        <table class="ledger" style="width:100%">${Object.entries(dietCounts).sort((a,b)=>b[1]-a[1]).map(([d,n])=>`<tr><td>${esc(d)}</td><td>${bar(n,focus.length,'#1F7A4D')}</td><td style="font-family:var(--mono);text-align:right">${n}</td></tr>`).join('')}</table>
+      </div>`:'<div class="gsub" style="margin-bottom:16px">No dietary labels in current guest set.</div>'}
+      ${Object.keys(accessCounts).length?`<div>
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px">Access</div>
+        <table class="ledger" style="width:100%">${Object.entries(accessCounts).sort((a,b)=>b[1]-a[1]).map(([a,n])=>`<tr><td>${esc(a)}</td><td>${bar(n,focus.length,'#5c6bc0')}</td><td style="font-family:var(--mono);text-align:right">${n}</td></tr>`).join('')}</table>
+      </div>`:''}`)}
+
+    ${mSec('slots','Slot confirmation',null,`
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        ${statCard('Confirmed',confirmed.length,'slots',confirmed.length===allSlots.length?'#1a6b2a':'var(--ink)')}
+        ${statCard('Tentative',tentative.length,'slots to confirm',tentative.length>0?'#b85c00':'#1a6b2a')}
+        ${statCard('Total slots',allSlots.length,null)}
+      </div>`)}
+
+    ${mSec('transit','Transit gaps',`${assumed.length} transit leg${assumed.length===1?'':' s'} in active itineraries without a real measured time.`,`
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:${assumed.length?'16px':'0'}">
+        ${statCard('Unmeasured legs',assumed.length,null,assumed.length>0?'#b85c00':'#1a6b2a')}
+        ${statCard('Avg transit cost','$'+avgTransit,'per guest',+avgTransit>0?'var(--ink)':'#1a6b2a')}
+      </div>
+      ${assumed.length?`<table class="ledger" style="width:100%">${assumed.map(l=>`<tr><td><b>${esc(l[0])}</b> <span class="gsub">to</span> <b>${esc(l[1])}</b></td><td style="text-align:right"><span style="font-family:var(--mono);font-size:11px;color:#b85c00">no time set</span></td></tr>`).join('')}</table><div style="margin-top:10px"><button class="btn sm" onclick="tab='transit';render()">Set times in Transit tab</button></div>`:'<div class="gsub">All legs measured. Good to go.</div>'}`)}
+
+    ${mSec('budget','Budget',`Cap is $${BUDGET_CAP} per guest across all stops.`,`
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        ${statCard('Over budget',overBgt.length,'guests',overBgt.length>0?'#c0392b':'#1a6b2a')}
+        ${statCard('Avg stop cost','$'+(focus.length?(focus.reduce((n,g)=>n+totalEventCost(g),0)/focus.length).toFixed(2):0),'per guest')}
+      </div>
+      ${overBgt.length?`<div style="margin-top:12px;background:#fff0f0;border:1px solid #f0c0c0;border-radius:4px;padding:10px 14px;font-size:12px">${overBgt.map(g=>`<div><b>${esc(g.n)}</b> $${totalEventCost(g).toFixed(2)}</div>`).join('')}</div>`:''}`)}
+  </div>`;
+}
+function render(){fitWindow();renderHead();
+  view.innerHTML=tab==='day'?viewDay():tab==='transit'?viewTransit():tab==='risk'?viewRisk():tab==='arcs'?viewArcs():tab==='metrics'?viewMetrics():viewGuests();
+  if(tab==='metrics'&&_metricsSection){
+    const el=document.getElementById('ms-'+_metricsSection);
+    if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),50);
+    _metricsSection=null;
+  }
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{tab=b.dataset.v;
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===b));render()});
+(async()=>{
+  await load();fitWindow();
+  const hasplan=plan.slots&&plan.slots.length>0;
+  if(!hasplan){
+    // No plan loaded — show welcome/load screen
+    view.innerHTML=`<div style="max-width:520px;margin:60px auto;text-align:center">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px">Raison d\'Etre · City Loop Planner</div>
+      <h2 style="font-size:24px;margin:0 0 12px">Load a plan to get started</h2>
+      <p class="note" style="margin-bottom:28px;font-size:13px">Partner venues and guest data are never stored here. Load your saved plan JSON to begin, then upload your guest CSV when ready.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn solid" style="font-size:14px;padding:10px 24px" onclick="document.getElementById('loadPlanInput').click()">Load plan JSON</button>
+        <input type="file" id="loadPlanInput" accept="application/json" style="display:none" onchange="importPlan(this.files[0])">
+      </div>
+      <p class="note" style="margin-top:20px;font-size:11px">Don\'t have a plan yet? Start from scratch on the <button class="btn sm" onclick="plan=defaultPlan();GUESTS=[];planStage=\'pre-eoi\';save();render()">Pre-EOI blank slate</button></p>
+    </div>`;
+    renderHead();
+  } else if(!Object.keys(plan.itin||{}).length){tionti()}
+  else render();
+})();
+</script>
