@@ -2251,7 +2251,7 @@ function viewMetrics(){
 
   // --- Disciplines ---
   const discCounts={};
-  focus.forEach(g=>(g.f||'').split(',').map(d=>d.trim()).filter(Boolean).forEach(d=>{discCounts[d]=(discCounts[d]||0)+1;}));
+  focus.forEach(g=>parseDiscs(g.f).forEach(d=>{discCounts[d]=(discCounts[d]||0)+1;}));
   const topDiscs=Object.entries(discCounts).sort((a,b)=>b[1]-a[1]).slice(0,10);
 
   // --- Dietary & access ---
