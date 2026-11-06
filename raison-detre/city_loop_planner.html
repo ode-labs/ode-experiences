@@ -270,42 +270,73 @@ function guestsOnPath(pid){
   return invited().filter(g=>plan.guestPath[g.id]===pid);
 }
 
-// Swap two guests between paths — the only mutation allowed.
-// movingGid goes to targetLabel; whoever was on targetLabel comes to movingGid's old path.
-function assignGuestToPath(movingGid, targetLabel){
+// Path reassignment — the only mutation allowed once planning is done.
+// Two verbs, dispatched by pathAssign():
+//   swap:<gid>  — exchange seats with exactly that guest, 1 for 1
+//   move:<pid>  — join a path outright (unassigned guests, or empty paths)
+function swapGuestPaths(gidA,gidB){
+  if(!gidB||gidA===gidB)return;
+  if(planLocked){
+    if(!plan.paths)return;
+    plan.guestPath=plan.guestPath||{};
+    const aPid=plan.guestPath[gidA],bPid=plan.guestPath[gidB];
+    if(bPid)plan.guestPath[gidA]=bPid;else delete plan.guestPath[gidA];
+    if(aPid)plan.guestPath[gidB]=aPid;else delete plan.guestPath[gidB];
+    plan.itin[gidA]=(plan.paths[bPid]||[]).slice();
+    plan.itin[gidB]=(plan.paths[aPid]||[]).slice();
+  }else{
+    const tmp=plan.itin[gidA];
+    plan.itin[gidA]=plan.itin[gidB];
+    plan.itin[gidB]=tmp;
+  }
+  save();render();
+}
+
+function moveGuestToPath(movingGid,targetLabel){
   if(!targetLabel)return;
   if(planLocked){
     if(!plan.paths||!plan.paths[targetLabel])return;
     plan.guestPath=plan.guestPath||{};
-    const oldLabel=plan.guestPath[movingGid]; // where moving guest currently is
-    // Find the guest(s) currently on targetLabel and move them to oldLabel
-    if(oldLabel&&oldLabel!==targetLabel){
-      invited().forEach(g=>{
-        if(g.id!==movingGid&&plan.guestPath[g.id]===targetLabel){
-          plan.guestPath[g.id]=oldLabel;
-          plan.itin[g.id]=(plan.paths[oldLabel]||[]).slice();
-        }
-      });
-    }
     plan.guestPath[movingGid]=targetLabel;
     plan.itin[movingGid]=(plan.paths[targetLabel]||[]).slice();
   }else{
-    const {labelMap,pathSlots}=livePathMap();
+    const {pathSlots}=livePathMap();
     const targetSlots=pathSlots[targetLabel];
     if(!targetSlots)return;
-    const oldLabel=labelMap[movingGid];
-    const oldSlots=oldLabel?pathSlots[oldLabel]:null;
-    // Swap: any guest on targetLabel gets moved to movingGid's old path
-    if(oldSlots&&oldLabel!==targetLabel){
-      invited().forEach(g=>{
-        if(g.id!==movingGid&&labelMap[g.id]===targetLabel){
-          plan.itin[g.id]=oldSlots.slice();
-        }
-      });
-    }
     plan.itin[movingGid]=targetSlots.slice();
   }
   save();render();
+}
+
+function pathAssign(gid,val){
+  if(!val)return;
+  const i=val.indexOf(':');
+  if(val.slice(0,i)==='swap')swapGuestPaths(gid,val.slice(i+1));
+  else moveGuestToPath(gid,val.slice(i+1));
+}
+
+// One dropdown entry per swap partner — "P3 · Alice" exchanges with Alice only.
+// Paths with nobody on them get a plain move option; guests with no path of
+// their own get move options for every path.
+function pathChoicesFor(g){
+  let cur,entries;
+  if(planLocked){
+    cur=plan.guestPath&&plan.guestPath[g.id];
+    entries=pathList().map(({pid})=>({pid,label:pid.toUpperCase(),occ:guestsOnPath(pid)}));
+  }else{
+    const {labelMap,pathSlots}=livePathMap();
+    cur=labelMap[g.id];
+    entries=Object.keys(pathSlots).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)))
+      .map(l=>({pid:l,label:l,occ:invited().filter(x=>labelMap[x.id]===l)}));
+  }
+  const out=[];
+  entries.forEach(({pid,label,occ})=>{
+    if(pid===cur)return;
+    if(!cur){out.push(`<option value="move:${pid}">${label}</option>`);return;}
+    if(!occ.length){out.push(`<option value="move:${pid}">${label} · empty</option>`);return;}
+    occ.forEach(x=>out.push(`<option value="swap:${x.id}">${label} · ${esc(x.n)}</option>`));
+  });
+  return {cur,opts:`<option value="">${cur?'swap with…':'assign to…'}</option>`+out.join('')};
 }
 
 // Override itin() when locked: resolve via guestPath
@@ -748,7 +779,6 @@ function braidRows(){
 function pathBraidRows(){
   const paths=pathList();
   if(!paths.length)return '<p class="note" style="padding:10px 0">No paths. Lock the plan after running the solver.</p>';
-  const allPids=paths.map(p=>p.pid);
 
   // Render each path as a timeline row + guest chips below it
   const rowHeight=34, chipAreaHeight=38;
@@ -768,16 +798,13 @@ function pathBraidRows(){
     slots.forEach(s=>{
       h+=`<div class="seg" title="${esc(s.venue)} ${hhmm(s.start)}–${hhmm(s.end)}" style="left:${X(s.start)}%;width:calc(${X(s.end)-X(s.start)}% - 2px);background:${venueColor(s.venue)}">${esc(s.venue.slice(0,2).toUpperCase())}</div>`;
     });
-    // guest chips with reassign dropdown
+    // guest chips with swap dropdown — one option per swap partner
     const gs=guestsOnPath(pid);
     const chips=gs.map(g=>{
-      const otherPids=allPids.filter(p=>p!==pid);
-      const opts=otherPids.map(p=>`<option value="${p}">${p.toUpperCase()}</option>`).join('');
+      const {opts}=pathChoicesFor(g);
       return `<span style="display:inline-flex;align-items:center;gap:3px;background:#fff;border:1px solid var(--rule);border-radius:2px;padding:2px 4px 2px 7px;font-size:11px;white-space:nowrap;margin:2px">
         <span style="font-weight:500">${esc(g.n)}</span>
-        <select title="Move ${esc(g.n)} to a different path" style="border:0;background:transparent;font-family:var(--mono);font-size:10px;color:var(--ink2);cursor:pointer;padding:0 2px" onchange="assignGuestToPath('${g.id}',this.value);this.selectedIndex=0">
-          <option value="">move to…</option>${opts}
-        </select>
+        <select title="Swap ${esc(g.n)} onto another guest's path" style="border:0;background:transparent;font-family:var(--mono);font-size:10px;color:var(--ink2);cursor:pointer;padding:0 2px" onchange="pathAssign('${g.id}',this.value);this.selectedIndex=0">${opts}</select>
       </span>`;
     }).join('');
 
@@ -795,12 +822,10 @@ function pathBraidRows(){
   const unassignedSection=unassigned.length?`<div style="margin-top:16px">
     <div class="eyebrow" style="color:#b85c00;margin-bottom:6px">Unassigned guests (${unassigned.length})</div>
     <div style="display:flex;flex-wrap:wrap;gap:4px">${unassigned.map(g=>{
-      const opts=allPids.map(p=>`<option value="${p}">${p.toUpperCase()}</option>`).join('');
+      const {opts}=pathChoicesFor(g);
       return `<span style="display:inline-flex;align-items:center;gap:3px;background:#fff5eb;border:1px solid #f0c070;border-radius:2px;padding:2px 4px 2px 7px;font-size:11px;white-space:nowrap">
         <span style="font-weight:500">${esc(g.n)}</span>
-        <select title="Assign ${esc(g.n)} to a path" style="border:0;background:transparent;font-family:var(--mono);font-size:10px;color:#b85c00;cursor:pointer;padding:0 2px" onchange="assignGuestToPath('${g.id}',this.value);this.selectedIndex=0">
-          <option value="">assign to…</option>${opts}
-        </select>
+        <select title="Assign ${esc(g.n)} to a path" style="border:0;background:transparent;font-family:var(--mono);font-size:10px;color:#b85c00;cursor:pointer;padding:0 2px" onchange="pathAssign('${g.id}',this.value);this.selectedIndex=0">${opts}</select>
       </span>`;
     }).join('')}</div>
   </div>`:'';
@@ -819,7 +844,7 @@ function numIn(val,cb,title){
 }
 function dayToolbarSections(){
   if(planLocked){
-    return tb('Assign','<span style="font-size:12px;color:var(--ink2)">'+pathList().length+' paths locked &middot; move guests in the braid or Guests tab</span>');
+    return tb('Assign','<span style="font-size:12px;color:var(--ink2)">'+pathList().length+' paths locked &middot; swap guests in the braid or Guests tab</span>');
   }
   const shuffleBtn='<button class="btn" title="Re-run the solver with a new random seed. Same constraints, different groupings." onclick="newSolverSeed();tionti()">Shuffle</button>';
   const planSec=tb('Plan','<button class="btn solid" title="Pull every interested guest into the plan and run the solver to build their routes" onclick="sampleAllInterested();tionti()">All guests</button><button class="btn" title="Re-run the solver with the current guest list. Tightens routes and fixes any unseated guests." onclick="tionti()">Re-plan</button>'+shuffleBtn);
@@ -836,7 +861,7 @@ function dayToolbarSections(){
   if(planStage==='paid'){
     const paidN=GUESTS.filter(g=>g.st==='paid').length;
     return tb('Final 25','<button class="btn solid" title="Switch to only guests who have paid. These are your confirmed 25." onclick="sampleAllPaid();tionti()">All paid guests</button><button class="btn" title="Re-run the solver for confirmed paid guests" onclick="tionti()">Re-plan</button><span style="font-size:11px;color:var(--ink3)">'+paidN+' confirmed</span>')+
-      tb('Lock paths','<button class="btn" style="border-color:#1F7A4D;color:#1F7A4D" title="Freeze all route sequences as named paths (P1, P2...). Slot editing and the solver are disabled. The only remaining action is moving guests between paths, then exporting." onclick="if(confirm(\'Lock the paths? Slot editing and solver will be disabled. You can only move guests between paths.\')){lockPlan();render()}">Lock &amp; assign</button>');
+      tb('Lock paths','<button class="btn" style="border-color:#1F7A4D;color:#1F7A4D" title="Freeze all route sequences as named paths (P1, P2...). Slot editing and the solver are disabled. The only remaining action is swapping guests between paths, then exporting." onclick="if(confirm(\'Lock the paths? Slot editing and solver will be disabled. You can only swap guests between paths.\')){lockPlan();render()}">Lock &amp; assign</button>');
   }
   return '';
 }
@@ -866,7 +891,7 @@ function viewDay(){
     </div>`:''}
   </div>
   <div style="border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 14px;margin-bottom:10px;background:var(--paper2,#f7f7f5)">
-    <div style="font-size:12px;color:var(--ink2);line-height:1.6;max-width:860px">${planLocked?'Paths are locked. The stop sequences are frozen. Use the path braid below or the Guests tab to move a guest from one path to another. When assignments are ready, export the Itineraries JSON from the Guests tab.':esc(activeStage.context)}</div>
+    <div style="font-size:12px;color:var(--ink2);line-height:1.6;max-width:860px">${planLocked?'Paths are locked. The stop sequences are frozen. Use the path braid below or the Guests tab to swap a guest with someone on another path. When assignments are ready, export the Itineraries JSON from the Guests tab.':esc(activeStage.context)}</div>
   </div>`;
   return stageBar+`<div style="display:flex;flex-wrap:wrap;gap:0;align-items:stretch;border:1px solid var(--rule);border-radius:4px;margin-bottom:10px;overflow:hidden">
     ${dayToolbarSections()}
@@ -881,7 +906,7 @@ function viewDay(){
       </div>
     </div>
   </div>
-  <p class="note" style="margin-bottom:12px">${planLocked?'Paths are locked. Use the rows below or the Guests tab to move a guest from one path to another. The stop sequences themselves cannot change.':'Each row is a partner venue. Each colored bar is a time slot — when it opens, how long, and how many guests it holds. Click any bar to edit its details.'}</p>
+  <p class="note" style="margin-bottom:12px">${planLocked?'Paths are locked. Use the rows below or the Guests tab to swap a guest with someone on another path. The stop sequences themselves cannot change.':'Each row is a partner venue. Each colored bar is a time slot — when it opens, how long, and how many guests it holds. Click any bar to edit its details.'}</p>
   <div class="scroller"><div class="tl">
     <div class="axis">${axis()}</div>${ticks()}${rows}</div></div>
   <div class="legend">
@@ -1352,35 +1377,11 @@ function viewGuests(){
     ${(()=>{
       const ps=gst(g.id).status;
       if(ps!=='invited') return '<td style="vertical-align:top;min-width:100px"><span class="gsub" style="font-size:10px">—</span></td>';
-      let curLabel,allOptions;
-      if(planLocked){
-        const pid=plan.guestPath&&plan.guestPath[g.id];
-        curLabel=pid?pid.toUpperCase():'';
-        const paths=pathList();
-        const occupants={};
-        invited().forEach(x=>{const p=plan.guestPath&&plan.guestPath[x.id];if(p)occupants[p]=(occupants[p]||[]).concat(x.n)});
-        allOptions=paths.map(p=>{
-          // Show all occupants of every path; current path gets "you + others"
-          const all=occupants[p.pid]||[];
-          const who=all.length?' · '+all.join(', '):'';
-          return `<option value="${p.pid}"${p.pid===pid?' selected':''}>${p.pid.toUpperCase()}${who}</option>`;
-        }).join('');
-      }else{
-        const {labelMap,pathSlots}=livePathMap();
-        curLabel=labelMap[g.id]||'';
-        const occupants={};
-        invited().forEach(x=>{const l=labelMap[x.id];if(l)occupants[l]=(occupants[l]||[]).concat(x.n)});
-        const allLabels=Object.keys(pathSlots).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
-        allOptions=allLabels.map(label=>{
-          // Show all occupants; your own path shows you + others
-          const all=occupants[label]||[];
-          const who=all.length?' · '+all.join(', '):'';
-          return `<option value="${label}"${label===curLabel?' selected':''}>${label}${who}</option>`;
-        }).join('');
-      }
+      const {cur,opts}=pathChoicesFor(g);
+      const curLabel=(cur||'').toUpperCase();
       return `<td style="vertical-align:top;min-width:100px">
         <div style="font-family:var(--mono);font-size:12px;font-weight:700;margin-bottom:3px">${curLabel||'<span style="color:#b85c00;font-size:10px">—</span>'}</div>
-        <select class="gsel" style="font-size:10px;max-width:160px" title="Select a path to swap this guest onto it" onchange="assignGuestToPath('${g.id}',this.value)">${allOptions}</select>
+        <select class="gsel" style="font-size:10px;max-width:160px" title="Pick the guest to swap paths with — you take their path, they take yours" onchange="pathAssign('${g.id}',this.value);this.selectedIndex=0">${opts}</select>
       </td>`;
     })()}
     <td style="font-family:var(--mono);font-size:12px;white-space:nowrap;vertical-align:top;${costColor}">${costFmt}${hasCar?` <span class="flag" style="border-color:#d9741a;color:#b85c00;background:#fff5eb">car</span>`:''}
