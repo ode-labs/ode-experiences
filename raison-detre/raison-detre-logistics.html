@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Raison d'Être Logistics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,200;0,300;0,400;0,600;1,300;1,400&family=Instrument+Serif:ital@1&family=Syne:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#171616; --bg2:#1f1e1e; --line:#3a3939; --text:#e8e8e8; --dim:#8d8b8b;
+  --critical:#ff3b30;
+  --muno:#C38844; --diana:#9b8cff; --chi:#ff7eb6; --demi:#2dd4bf;
+  --bubae:#a3e635; --dezja:#4da3ff; --chirag:#ff8a3d; --umika:#ffd93d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{background:var(--bg);color:var(--text);font-family:"Inter Tight","Helvetica Neue",Arial,sans-serif;font-weight:300;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.label{font-family:"Syne","Helvetica Neue",sans-serif;font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400}
+.dim{color:var(--dim)}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:rgba(23,22,22,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:24px;padding:0 24px;height:52px}
+nav .links{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+nav .links::-webkit-scrollbar{display:none}
+nav a{text-decoration:none;color:var(--dim)}
+nav a:hover{color:var(--text)}
+nav .brand{color:var(--text);white-space:nowrap}
+@media(max-width:760px){nav .brand{display:none}}
+
+section{padding:88px 24px;border-bottom:1px solid var(--line);max-width:1400px;margin:0 auto}
+h1{font-weight:300;font-size:clamp(56px,11vw,168px);line-height:.95;letter-spacing:-.03em}
+h2{font-weight:300;font-size:clamp(36px,5.5vw,76px);line-height:1.02;letter-spacing:-.02em;margin:14px 0 40px}
+h3{font-weight:600;font-size:20px;line-height:1.25}
+p.lead{font-size:clamp(18px,1.8vw,24px);max-width:62ch;margin-bottom:12px}
+b,strong{font-weight:600}
+
+/* hero */
+.hero{min-height:78vh;display:flex;flex-direction:column;justify-content:flex-end;gap:28px;padding-top:120px;border-bottom:1px solid var(--line)}
+.hero .meta{display:flex;flex-wrap:wrap;gap:10px 36px;color:var(--dim)}
+.count{display:flex;gap:40px;flex-wrap:wrap;align-items:flex-end}
+.hero{padding-left:24px;padding-right:24px;padding-bottom:48px}
+.hero .meta{align-items:center}
+.countdown{border:1px solid var(--text);color:var(--text);border-radius:999px;padding:6px 14px}
+
+/* role chips */
+.chip{width:fit-content;justify-self:start;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--c);border-radius:999px;padding:3px 12px 3px 9px;font-size:13px;font-weight:600;color:var(--c);white-space:nowrap}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
+.chip small{font-weight:300;color:var(--dim);font-size:12px}
+.muno{--c:var(--muno)}.diana{--c:var(--diana)}.chi{--c:var(--chi)}.demi{--c:var(--demi)}
+.bubae{--c:var(--bubae)}.dezja{--c:var(--dezja)}.chirag{--c:var(--chirag)}.umika{--c:var(--umika)}
+.crit{--c:var(--critical)}
+.tag-crit{display:inline-block;background:var(--critical);color:#fff;font-family:"Syne",sans-serif;font-weight:600;font-size:10px;letter-spacing:.1em;padding:3px 8px;border-radius:2px;text-transform:uppercase;vertical-align:middle}
+
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0;border-top:1px solid var(--line)}
+.legend div{padding:18px 16px 18px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.legend .t{color:var(--dim);font-size:14px}
+.legend .crit-key{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;color:var(--dim);font-size:14px}
+
+/* critical box */
+.critical{border:1px solid var(--critical);border-left:6px solid var(--critical);padding:28px;background:rgba(255,59,48,.06)}
+.critical ul{list-style:none;display:grid;gap:14px;margin-top:18px}
+.critical li{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;margin-top:28px}
+
+/* check items */
+.task{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #2a2929;cursor:pointer}
+.task input{appearance:none;width:18px;height:18px;border:1px solid var(--dim);border-radius:3px;flex:none;margin-top:3px;cursor:pointer;display:grid;place-content:center}
+.task input:checked{background:var(--c,#e8e8e8);border-color:var(--c,#e8e8e8)}
+.task input:checked::after{content:"";width:8px;height:4px;border-left:2px solid #111;border-bottom:2px solid #111;transform:rotate(-45deg) translate(1px,-1px)}
+.task input:checked + span{color:var(--dim);text-decoration:line-through}
+.task .when{margin-left:auto;color:var(--dim);font-size:13px;white-space:nowrap;padding-left:10px}
+
+/* people cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.card{border:1px solid var(--line);border-top:3px solid var(--c);padding:22px;background:var(--bg2)}
+.card header{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.card .name{font-size:26px;font-weight:300;color:var(--c)}
+.card .role{color:var(--dim);font-size:14px}
+.card h4{margin:16px 0 4px;color:var(--dim)}
+
+/* phase strip */
+.phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);margin-bottom:56px}
+.phases div{padding:16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.phases .d{font-size:22px;font-weight:300;margin-top:6px}
+
+/* day by day (pre-event) */
+.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));border-left:1px solid var(--line)}
+.day{padding:0 22px 24px;border-right:1px solid var(--line)}
+.day .dt{font-size:44px;font-weight:200;line-height:1;margin:10px 0 18px}
+.day ul{list-style:none;display:grid;gap:14px}
+.day li{display:flex;flex-direction:column;gap:6px;font-size:15px}
+
+/* day-of timeline */
+.tl{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:150px 1fr;gap:24px;padding:26px 0;border-bottom:1px solid var(--line)}
+.row .time{font-family:"Syne",sans-serif;font-weight:600;font-size:13px;letter-spacing:.06em;padding-top:6px}
+.row h3{font-size:clamp(22px,2.4vw,32px);font-weight:300;margin-bottom:6px}
+.row p{color:#c9c7c7;max-width:70ch}
+.row .who{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.row.is-crit{border-left:4px solid var(--critical);padding-left:18px}
+@media(max-width:640px){.row{grid-template-columns:1fr;gap:6px}}
+
+/* dinner run of show */
+.ros{display:grid;grid-template-columns:repeat(6,minmax(210px,1fr));border-left:1px solid var(--line);overflow-x:auto}
+.ros .col{border-right:1px solid var(--line);padding:0 18px 20px;min-width:210px}
+.ros .t{margin-bottom:34px}
+.ros .item{margin-bottom:26px}
+.ros .item b{display:block;font-size:19px;line-height:1.2}
+.ros .item i{font-family:"Inter Tight";font-style:italic;font-weight:300;display:block}
+.ros .item .d{color:var(--dim);font-size:14px;margin-top:6px;display:block}
+.ros .pa{display:flex;gap:8px;align-items:center;font-style:italic;margin-top:10px}
+.ros .pa svg{flex:none}
+.ros .who{display:flex;flex-direction:column;gap:6px;margin-top:12px;align-items:flex-start}
+.note{color:var(--dim);font-size:14px;margin-top:16px;max-width:80ch}
+
+footer{padding:40px 24px;color:var(--dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;max-width:1400px;margin:0 auto}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="links label">
+    <a href="#overview">Overview</a>
+    <a href="#hash-table">Hash Table</a>
+    <a href="#pre">Pre-event</a>
+    <a href="#dayof">Day-of</a>
+    <a href="#dinner">Dinner</a>
+    <a href="#post">Post-event</a>
+    <a href="#confirm">To confirm</a>
+  </div>
+  <div class="label brand">Raison d'Être | Ode Experience</div>
+</nav>
+
+<header class="hero" id="top" style="max-width:1400px;margin:0 auto">
+  <div class="label dim">An experiment in perception · Event logistics · Hash Table working page</div>
+  <h1>Raison d'Être</h1>
+  <div class="meta label">
+    <span class="countdown"><span id="days">4</span> days to go</span>
+    <span>An Ode Experience</span><span>New York</span><span>Saturday, November 14, 2026</span><span>25 guests</span>
+  </div>
+</header>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="serif" style="font-size:26px">At a glance</div>
+  <h2>One day and evening, four phases.</h2>
+  <div class="phases">
+    <div><span class="label dim">Prep</span><div class="d">Nov 10 to 13</div></div>
+    <div><span class="label dim">Day before</span><div class="d">Nov 13</div></div>
+    <div><span class="label dim">Day-of</span><div class="d">Nov 14</div></div>
+    <div><span class="label dim">Following day</span><div class="d">Nov 15</div></div>
+    <div><span class="label dim">Following week</span><div class="d">Nov 16 to 22</div></div>
+    <div><span class="label dim">Report publishes</span><div class="d">Nov 28</div></div>
+  </div>
+
+  <div class="critical">
+    <div><span class="tag-crit">Critical</span> &nbsp; <span class="label">Must be true before Saturday</span></div>
+    <ul>
+      <li><span class="chip chi">Chi</span><span>All 25 guests are on Partiful and the sheet tracker is updated.</span></li>
+      <li><span class="chip bubae">Bubae</span><span>Dietary restrictions for all 25 guests are with the chef. Final menu with wine and cocktail pairings is locked.</span></li>
+      <li><span class="chip chirag">Chirag</span><span>Every stop has the final logistics for the day (Nov 10 to 12). Any schedule changes are answered the same day.</span></li>
+      <li><span class="chip muno">Muno</span><span>Dinner seating and city loop path assignments are final. Emails for Nov 10 to 15 are written and scheduled.</span></li>
+      <li><span class="chip diana">Diana</span><span>All 25 guest paths are complete and all 8 pages are live and tested.</span></li>
+      <li><span class="chip umika">Umika</span><span>Report template, Decoded visualization, Your Sense Perception and Your turn are ready.</span></li>
+      <li><span style="display:flex;gap:8px"><span class="chip dezja">Dezja</span><span class="chip demi">Demi</span></span><span>Ridezign logistics, table decor and menu design are finished. Totes are packed for each handoff stop.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- HASH TABLE -->
+<section id="hash-table">
+  <div class="serif" style="font-size:26px">The Hash Table</div>
+  <h2>Eight keys. One color each.</h2>
+  <div class="legend">
+    <div class="muno"><span class="chip muno">Muno</span><span class="t">Chief Experience Architect</span></div>
+    <div class="diana"><span class="chip diana">Diana</span><span class="t">Perception Architect</span></div>
+    <div class="chi"><span class="chip chi">Chi</span><span class="t">Guest Relations</span></div>
+    <div class="demi"><span class="chip demi">Demi</span><span class="t">Spatial Architect</span></div>
+    <div class="bubae"><span class="chip bubae">Bubae</span><span class="t">Culinary Experience Lead</span></div>
+    <div class="dezja"><span class="chip dezja">Dezja</span><span class="t">Sensorium Designer</span></div>
+    <div class="chirag"><span class="chip chirag">Chirag</span><span class="t">Partnerships Strategist</span></div>
+    <div class="umika"><span class="chip umika">Umika</span><span class="t">Creative Technologist</span></div>
+    <div class="crit-key"><span class="tag-crit">Critical</span><span>Red marks information everyone needs to see. Check boxes below are saved on your own device.</span></div>
+  </div>
+
+  <h2 style="margin-top:72px;font-size:clamp(28px,4vw,52px)">Workstreams by owner</h2>
+  <div class="cards">
+
+    <article class="card muno">
+      <header><span class="name">Muno</span><span class="role">Chief Experience Architect</span></header>
+      <label class="task"><input type="checkbox" data-k="muno1"><span>Follow up across all workstreams</span></label>
+      <label class="task"><input type="checkbox" data-k="muno2"><span>Emails for the remaining days, Nov 10 to 15</span></label>
+      <label class="task"><input type="checkbox" data-k="muno3"><span><span class="tag-crit">Critical</span> Dinner seating assignment</span></label>
+      <label class="task"><input type="checkbox" data-k="muno4"><span><span class="tag-crit">Critical</span> City loop path assignment</span></label>
+      <label class="task"><input type="checkbox" data-k="muno5"><span>Studio S II website page</span></label>
+      <label class="task" style="padding-left:30px"><input type="checkbox" data-k="muno5a"><span>Calabasa testing</span></label>
+      <label class="task" style="padding-left:30px"><input type="checkbox" data-k="muno5b"><span>Ikenga wines testing</span></label>
+      <h4 class="label">Day-of</h4>
+      <div>Tote handoff at buddy buddy, opens 8:00am</div>
+    </article>
+
+    <article class="card chi">
+      <header><span class="name">Chi</span><span class="role">Guest Relations</span></header>
+      <label class="task"><input type="checkbox" data-k="chi0"><span><span class="tag-crit">Critical</span> All 25 guests on Partiful, sheet tracker updated</span></label>
+      <label class="task"><input type="checkbox" data-k="chi1"><span>Photography experiment</span><span class="when">Nov 11</span></label>
+      <label class="task"><input type="checkbox" data-k="chi2"><span>Outfit reminder</span><span class="when">Nov 11</span></label>
+      <label class="task"><input type="checkbox" data-k="chi3"><span>Dinner details</span><span class="when">Nov 12</span></label>
+      <label class="task"><input type="checkbox" data-k="chi4"><span>City loop ratings</span><span class="when">Nov 13</span></label>
+      <label class="task"><input type="checkbox" data-k="chi5"><span>Day-of message</span><span class="when">Nov 14</span></label>
+      <label class="task"><input type="checkbox" data-k="chi6"><span>Follow-up to guests</span><span class="when">Nov 15</span></label>
+    </article>
+
+    <article class="card diana">
+      <header><span class="name">Diana</span><span class="role">Perception Architect</span></header>
+      <label class="task"><input type="checkbox" data-k="d0"><span><span class="tag-crit">Critical</span> All 25 guest paths</span></label>
+      <h4 class="label">Completed pages</h4>
+      <label class="task"><input type="checkbox" data-k="d1"><span>The confusion</span></label>
+      <label class="task"><input type="checkbox" data-k="d2"><span>The threshold</span></label>
+      <label class="task"><input type="checkbox" data-k="d3"><span>Baseline revisited</span></label>
+      <label class="task"><input type="checkbox" data-k="d4"><span>Decoded</span></label>
+      <label class="task"><input type="checkbox" data-k="d5"><span>Your perception</span></label>
+      <label class="task"><input type="checkbox" data-k="d6"><span>Your turn</span></label>
+      <label class="task"><input type="checkbox" data-k="d7"><span>Editorial</span></label>
+      <label class="task"><input type="checkbox" data-k="d8"><span>Reflection</span></label>
+    </article>
+
+    <article class="card bubae">
+      <header><span class="name">Bubae</span><span class="role">Culinary Experience Lead</span></header>
+      <label class="task"><input type="checkbox" data-k="b1"><span>Wine list</span></label>
+      <label class="task"><input type="checkbox" data-k="b2"><span><span class="tag-crit">Critical</span> Final menu with wine and cocktail pairing</span></label>
+      <label class="task"><input type="checkbox" data-k="b3"><span>Wine rating and course 3 rating</span></label>
+      <label class="task"><input type="checkbox" data-k="b4"><span><span class="tag-crit">Critical</span> Dietary restrictions shared with chef for all 25 guests</span></label>
+    </article>
+
+    <article class="card dezja">
+      <header><span class="name">Dezja</span><span class="role">Sensorium Designer</span></header>
+      <label class="task"><input type="checkbox" data-k="dz1"><span>Ridezign logistics (with Demi)</span></label>
+      <label class="task"><input type="checkbox" data-k="dz2"><span>Table decor (with Demi)</span></label>
+      <label class="task"><input type="checkbox" data-k="dz3"><span>Menu design (with Demi)</span></label>
+      <h4 class="label">Day-of</h4>
+      <div>Tote handoff at 113 Spring, opens 11:00am</div>
+      <div>Dinner setup with Demi</div>
+    </article>
+
+    <article class="card demi">
+      <header><span class="name">Demi</span><span class="role">Spatial Architect</span></header>
+      <label class="task"><input type="checkbox" data-k="dm1"><span>Ridezign logistics (with Dezja)</span></label>
+      <label class="task"><input type="checkbox" data-k="dm2"><span>Table decor (with Dezja)</span></label>
+      <label class="task"><input type="checkbox" data-k="dm3"><span>Menu design (with Dezja)</span></label>
+      <h4 class="label">Day-of</h4>
+      <div>Tote handoff at ICP, opens 10:30am</div>
+      <div>Dinner setup with Dezja</div>
+    </article>
+
+    <article class="card chirag">
+      <header><span class="name">Chirag</span><span class="role">Partnerships Strategist</span></header>
+      <label class="task"><input type="checkbox" data-k="c1"><span><span class="tag-crit">Critical</span> Contact all stops with final logistics for the day</span><span class="when">Nov 10 to 12</span></label>
+      <label class="task"><input type="checkbox" data-k="c2"><span>Respond to any last minute schedule changes</span><span class="when">Ongoing</span></label>
+    </article>
+
+    <article class="card umika">
+      <header><span class="name">Umika</span><span class="role">Creative Technologist</span></header>
+      <label class="task"><input type="checkbox" data-k="u1"><span>Report template</span></label>
+      <label class="task"><input type="checkbox" data-k="u2"><span>Decoded visualization</span></label>
+      <label class="task"><input type="checkbox" data-k="u3"><span>Your Sense Perception</span></label>
+      <label class="task"><input type="checkbox" data-k="u4"><span>Your turn</span></label>
+    </article>
+  </div>
+</section>
+
+<!-- PRE -->
+<section id="pre">
+  <div class="serif" style="font-size:26px">Pre-event</div>
+  <h2>November 10 to 13.</h2>
+  <div class="days">
+    <div class="day">
+      <div class="label dim">Tuesday</div><div class="dt">Nov 10</div>
+      <ul>
+        <li><span class="chirag chip">Chirag</span>Begin contacting all stops with final logistics</li>
+        <li><span class="muno chip">Muno</span>Email for the day, seating and path assignments in progress</li>
+        <li><span class="tag-crit" style="align-self:flex-start">Critical</span>Team meeting today: confirm the open items at the bottom of this page</li>
+      </ul>
+    </div>
+    <div class="day">
+      <div class="label dim">Wednesday</div><div class="dt">Nov 11</div>
+      <ul>
+        <li><span class="chi chip">Chi</span>Photography experiment and outfit reminder to guests</li>
+        <li><span class="chirag chip">Chirag</span>Stop logistics continue, answer schedule changes</li>
+        <li><span class="muno chip">Muno</span>Email for the day</li>
+      </ul>
+    </div>
+    <div class="day">
+      <div class="label dim">Thursday</div><div class="dt">Nov 12</div>
+      <ul>
+        <li><span class="chi chip">Chi</span>Dinner details to guests</li>
+        <li><span class="chirag chip">Chirag</span>Final day to reach every stop</li>
+        <li><span class="bubae chip">Bubae</span>Menu, pairings and dietary list with the chef</li>
+        <li><span class="muno chip">Muno</span>Email for the day</li>
+      </ul>
+    </div>
+    <div class="day">
+      <div class="label dim">Friday, day before</div><div class="dt">Nov 13</div>
+      <ul>
+        <li><span class="chi chip">Chi</span>City loop ratings to guests</li>
+        <li><span class="diana chip">Diana</span> <span class="umika chip">Umika</span>All pages and visualizations tested</li>
+        <li><span class="dezja chip">Dezja</span> <span class="demi chip">Demi</span>Totes packed, decor and menus printed</li>
+        <li><span class="muno chip">Muno</span>Email for the day</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DAY OF -->
+<section id="dayof">
+  <div class="serif" style="font-size:26px">Day-of</div>
+  <h2>Saturday, November 14.</h2>
+  <div class="tl">
+
+    <div class="row">
+      <div class="time">8:00 AM</div>
+      <div>
+        <h3>buddy buddy opens</h3>
+        <p>Tote handoff to guests.</p>
+        <div class="who"><span class="muno chip">Muno <small>on site, tote</small></span><span class="chi chip">Chi <small>day-of message sent</small></span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="time">10:30 AM</div>
+      <div>
+        <h3>ICP opens</h3>
+        <p>Tote handoff to guests.</p>
+        <div class="who"><span class="demi chip">Demi <small>on site, tote</small></span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="time">11:00 AM</div>
+      <div>
+        <h3>113 Spring opens. City loop begins.</h3>
+        <p>Tote handoff to guests. Guests start a self-guided exploration of New York, each on an assigned path.</p>
+        <div class="who"><span class="dezja chip">Dezja <small>on site, tote</small></span><span class="chirag chip">Chirag <small>on call for every stop</small></span><span class="diana chip">Diana <small>guest paths live</small></span></div>
+      </div>
+    </div>
+
+    <div class="row is-crit">
+      <div class="time">3:00 to 4:00 PM</div>
+      <div>
+        <h3>East Williamsburg. All guests together.</h3>
+        <p>The city loop ends here. This is the first time the full group is in one place.</p>
+        <div class="who"><span class="tag-crit">Critical</span><span class="muno chip">Muno</span><span class="chi chip">Chi</span><span class="chirag chip">Chirag</span></div>
+      </div>
+    </div>
+
+    <div class="row is-crit">
+      <div class="time">Setup time TBC</div>
+      <div>
+        <h3>Dinner setup</h3>
+        <p>Table decor, menus, lighting and room scent in place before guests arrive.</p>
+        <div class="who"><span class="tag-crit">Critical</span><span class="dezja chip">Dezja</span><span class="demi chip">Demi</span><span class="bubae chip">Bubae <small>kitchen, pairings</small></span><span class="umika chip">Umika <small>PA and Decoded check</small></span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="time">6:45 PM</div>
+      <div>
+        <h3>Guests arrive for dinner</h3>
+        <p>Seating assignments are set. Convergence Cocktail begins at 7:00.</p>
+        <div class="who"><span class="chi chip">Chi <small>arrivals</small></span><span class="muno chip">Muno <small>seating</small></span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="time">7:00 to 10:20 PM</div>
+      <div>
+        <h3>Dinner. Six courses and Decoded.</h3>
+        <p>Full run of show in the next section.</p>
+        <div class="who"><span class="muno chip">Muno</span><span class="diana chip">Diana</span><span class="chi chip">Chi</span><span class="demi chip">Demi</span><span class="bubae chip">Bubae</span><span class="dezja chip">Dezja</span><span class="umika chip">Umika</span></div>
+      </div>
+    </div>
+
+  </div>
+  <p class="note">Role chips show who owns each moment based on workstreams. Positions at each stop beyond the tote handoffs are confirmed in the team meeting.</p>
+</section>
+
+<!-- DINNER -->
+<section id="dinner">
+  <div class="serif" style="font-size:26px">Run of show</div>
+  <h2>Dinner, 7:00 to 10:20 PM.</h2>
+  <div class="ros">
+
+    <div class="col">
+      <div class="label t">7:00 to 7:30</div>
+      <div class="item"><b>Convergence Cocktail.</b><i>7:00 to 7:30 (30 mins)</i>
+        <span class="d">Guests gather. Two welcome cocktails. Standing and socializing. Choose first cocktail.</span>
+        <div class="who"><span class="chi chip">Chi</span><span class="bubae chip">Bubae</span><span class="muno chip">Muno</span></div></div>
+    </div>
+
+    <div class="col">
+      <div class="label t">7:30 to 8:20</div>
+      <div class="item"><b>Course 1: The Provocation.</b><i>+ Wine Pairing</i><i>7:30 to 7:50 (20 mins)</i>
+        <span class="d">First challenge. Complex or unfamiliar taste profile.</span></div>
+      <div class="item"><b>Course 2: The Confusion.</b><i>+ Wine Pairing</i><i>7:50 to 8:20 (30 mins)</i>
+        <span class="d">Smells like one thing, tastes like another. Disorientation.</span>
+        <div class="pa"><span class="chip diana">PA: Confusion</span></div></div>
+      <div class="who"><span class="bubae chip">Bubae</span><span class="diana chip">Diana</span></div>
+    </div>
+
+    <div class="col" style="background:rgba(255,59,48,.05)">
+      <div class="label t">8:20 to 8:50 <span class="tag-crit">Apex</span></div>
+      <div class="item"><b>Course 3: The Threshold.</b><i>+ Cocktail Pairing</i><i>8:20 to 8:50 (30 mins)</i>
+        <span class="d">Room lighting fades. Silence. A difficult course. Shared discomfort. The emotional apex.</span>
+        <div class="pa"><span class="chip diana">PA: Threshold</span></div>
+        <div class="who"><span class="dezja chip">Dezja <small>lighting, sound</small></span><span class="demi chip">Demi <small>room</small></span><span class="bubae chip">Bubae</span><span class="diana chip">Diana</span></div></div>
+    </div>
+
+    <div class="col">
+      <div class="label t">8:50 to 9:10</div>
+      <div class="item"><b>Course 4: The Turn.</b><i>+ Wine Pairing</i><i>8:50 to 9:10 (20 mins)</i>
+        <span class="d">The moment the room shifts. Feels like relief.</span>
+        <div class="who"><span class="dezja chip">Dezja <small>lighting returns</small></span><span class="bubae chip">Bubae</span></div></div>
+    </div>
+
+    <div class="col">
+      <div class="label t">9:10 to 9:50</div>
+      <div class="item"><b>Course 5: The Familiar.</b><i>+ Wine Pairing</i><i>9:10 to 9:30 (20 mins)</i>
+        <span class="d">Warmth returning. Something recognizable, newly appreciated.</span></div>
+      <div class="item"><b>Course 6: The Memory.</b><i>+ Wine Pairing</i><i>9:30 to 9:50 (20 mins)</i>
+        <span class="d">Dessert. Pure comfort. Something memorable.</span>
+        <div class="pa"><span class="chip diana">PA: Baseline revisited</span></div></div>
+      <div class="who"><span class="bubae chip">Bubae</span><span class="diana chip">Diana</span></div>
+    </div>
+
+    <div class="col">
+      <div class="label t">9:50 to 10:20</div>
+      <div class="item"><b>Decoded.</b><i>9:50 to 10:20 (30 mins)</i>
+        <span class="d">Insights revealed on PA. Choose second cocktail.</span>
+        <div class="pa"><span class="chip umika">PA: Ode Editorial + Feedback</span></div>
+        <div class="who"><span class="umika chip">Umika <small>visualization</small></span><span class="diana chip">Diana</span><span class="muno chip">Muno</span><span class="bubae chip">Bubae <small>cocktail</small></span></div></div>
+    </div>
+
+  </div>
+  <p class="note">PA is the guest's personal page on their phone. The chip color on each PA moment shows who owns that page. Course 3 carries the course rating and the cocktail pairing.</p>
+</section>
+
+<!-- POST -->
+<section id="post">
+  <div class="serif" style="font-size:26px">Post-event</div>
+  <h2>November 15 to 28.</h2>
+  <div class="grid2">
+    <div>
+      <h3>Following day, Nov 15</h3>
+      <label class="task chi"><input type="checkbox" data-k="p1"><span><span class="chi chip">Chi</span> &nbsp;Follow-up to guests</span></label>
+      <label class="task muno"><input type="checkbox" data-k="p2"><span><span class="muno chip">Muno</span> &nbsp;Final email of the sequence, follow up across all workstreams</span></label>
+      <label class="task chirag"><input type="checkbox" data-k="p3"><span><span class="chirag chip">Chirag</span> &nbsp;Thank-you and closing notes to every stop</span></label>
+    </div>
+    <div>
+      <h3>Following week, Nov 16 to 22</h3>
+      <label class="task umika"><input type="checkbox" data-k="p4"><span><span class="umika chip">Umika</span> &nbsp;Feed guest data into the report template</span></label>
+      <label class="task diana"><input type="checkbox" data-k="p5"><span><span class="diana chip">Diana</span> &nbsp;Pull perception findings from guest pages</span></label>
+      <label class="task muno"><input type="checkbox" data-k="p6"><span><span class="muno chip">Muno</span> &nbsp;Editorial review of the report</span></label>
+    </div>
+    <div class="critical" style="grid-column:1/-1">
+      <span class="tag-crit">Critical</span> &nbsp; <span class="label">November 28</span>
+      <p class="lead" style="margin:14px 0 0">The State of Human Perception 2026 report publishes.</p>
+    </div>
+  </div>
+  <p class="note">Post-event owners for Nov 16 to 22 are proposed from each person's workstream. Adjust in the meeting.</p>
+</section>
+
+<!-- TO CONFIRM -->
+<section id="confirm">
+  <div class="serif" style="font-size:26px">For today's meeting</div>
+  <h2>Open items to confirm.</h2>
+  <div class="critical">
+    <span class="tag-crit">Critical</span> &nbsp; <span class="label">Delete this section before you publish</span>
+    <ul>
+      <li><span class="label dim">1</span><span><b>Dinner setup time.</b> When do Dezja and Demi start setting up at the dinner venue, and who lets them in?</span></li>
+      <li><span class="label dim">2</span><span><b>Venue name.</b> Page says dinner is at hed NYC. Studio S II appears in Muno's workstreams. Confirm the venue and the address guests receive.</span></li>
+      <li><span class="label dim">3</span><span><b>Venue hours.</b> Guests arrive at 6:45 and Decoded ends at 10:20. Confirm the venue allows load-out after 10:20.</span></li>
+      <li><span class="label dim">4</span><span><b>Who is at each stop.</b> Tote owners are set for buddy buddy, ICP and 113 Spring. Name who stands at East Williamsburg and who covers the rest of the loop.</span></li>
+      <li><span class="label dim">5</span><span><b>Addresses and contacts.</b> Add stop addresses and the day-of phone numbers for each Hash Table member.</span></li>
+    </ul>
+  </div>
+</section>
+
+<footer class="label">
+  <span>Raison d'Être | Ode Experience</span>
+  <span>Saturday, November 14, 2026 · New York</span>
+</footer>
+
+<script>
+(function(){
+  try{
+    var d=Math.ceil((new Date(2026,10,14)-new Date(new Date().setHours(0,0,0,0)))/864e5);
+    document.getElementById('days').textContent=d>0?d:(d===0?'Today':'0');
+  }catch(e){}
+  var boxes=document.querySelectorAll('input[data-k]');
+  boxes.forEach(function(b){
+    try{ if(localStorage.getItem('rde-'+b.dataset.k)==='1') b.checked=true; }catch(e){}
+    b.addEventListener('change',function(){
+      try{ localStorage.setItem('rde-'+b.dataset.k,b.checked?'1':'0'); }catch(e){}
+    });
+  });
+})();
+</script>
+</body>
+</html>
