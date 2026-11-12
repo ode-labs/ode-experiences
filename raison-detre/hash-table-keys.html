@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Raison d'Être — Hash Table Keys</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;600;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--card:#161514;--panel:#1d1b1a;--line:#2e2c29;--text:#eceae6;--dim:#8f8c86}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0a0a;color:var(--text);font-family:"Inter Tight","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;padding:56px 24px}
+.wrap{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:44px 48px 30px;display:flex;flex-direction:column;gap:34px;min-height:1000px}
+.top{display:flex;justify-content:space-between;font-size:15px;letter-spacing:.14em;font-weight:500}
+.top .k{color:var(--a)}
+.top .n{color:var(--dim)}
+
+.main{display:flex;gap:44px;align-items:stretch}
+.photo{flex:0 0 340px;background:var(--panel);border-radius:4px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;min-height:400px}
+.photo b{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15px;letter-spacing:.22em;color:var(--a)}
+.photo span{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--dim)}
+.id{display:flex;flex-direction:column;justify-content:center;gap:10px}
+.id h1{font-weight:800;font-size:76px;line-height:1;letter-spacing:-.02em}
+.id .role{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:500;color:var(--a)}
+.id p{font-size:22px;font-weight:300;line-height:1.45;color:#c9c6c1;max-width:20ch}
+
+.band .lbl,.forward .lbl{font-family:"IBM Plex Mono",monospace;font-size:14px;letter-spacing:.22em;font-weight:600;color:var(--a);margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:12px}
+.chips span{font-family:"IBM Plex Mono",monospace;font-size:17px;border:1px solid var(--line);background:var(--panel);padding:10px 18px;border-radius:2px;color:#d8d5d0}
+.chips span i{font-style:normal;color:var(--a)}
+
+.forward{border:1px dashed var(--a);border-radius:2px;padding:20px 22px}
+.forward .fill{font-size:26px;font-weight:300;color:var(--dim)}
+
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:14px;letter-spacing:.14em;color:var(--dim);margin-top:auto;padding-top:8px}
+.dots{display:flex;gap:6px}
+.dots i{width:14px;height:14px;background:#262422;border-radius:1px}
+.dots i.on{background:var(--a)}
+
+.page-head{max-width:920px;margin:0 auto 40px;display:flex;justify-content:space-between;align-items:baseline}
+.page-head h2{font-weight:300;font-size:30px;letter-spacing:-.01em}
+.page-head span{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--dim);letter-spacing:.18em}
+@media print{body{background:#fff;padding:0}.wrap{gap:0}.card{page-break-after:always;border-radius:0}}
+</style>
+</head>
+<body>
+
+<div class="page-head"><h2>The Hash Table</h2><span class="mono">EIGHT KEYS · RAISON D'ÊTRE · NOV 14</span></div>
+
+<div class="wrap">
+
+<!-- [0] -->
+<div class="card" style="--a:#C38844">
+  <div class="top mono"><span class="k">ODE · KEY [0]</span><span class="n">01 / 08 RESOLVED</span></div>
+  <div class="main">
+    <div class="photo"><b>PHOTO</b><span>drop portrait here</span></div>
+    <div class="id"><h1>Muno</h1><div class="role">Chief Experience Architect</div>
+      <p>The narrative, the sensory arc, and final decisions across all phases.</p></div>
+  </div>
+  <div class="band"><div class="lbl">DRAWS FROM</div><div class="chips"><span>Creative direction</span><span>Narrative design</span><span>Curation</span></div></div>
+  <div class="band"><div class="lbl">HANDS OFF TO</div><div class="chips"><span><i>[4]</i> the sensory arc brief</span><span><i>[6]</i> vetted partners</span></div></div>
+  <div class="forward"><div class="lbl">MOST LOOKING FORWARD TO</div><div class="fill">[Add one word or sentence]</div></div>
+  <div class="foot mono"><span>RAISON D'ÊTRE · NEW YORK · NOV 14</span><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+</div>
+
+<!-- [1] -->
+<div class="card" style="--a:#ff7eb6">
+  <div class="top mono"><span class="k">ODE · KEY [1]</span><span class="n">02 / 08 RESOLVED</span></div>
+  <div class="main">
+    <div class="photo"><b>PHOTO</b><span>drop portrait here</span></div>
+    <div class="id"><h1>Chi</h1><div class="role">Guest Relations</div>
+      <p>Every guest touchpoint, from save-the-date to the follow-up.</p></div>
+  </div>
+  <div class="band"><div class="lbl">DRAWS FROM</div><div class="chips"><span>Guest comms</span><span>Hospitality</span><span>Coordination</span></div></div>
+  <div class="band"><div class="lbl">HANDS OFF TO</div><div class="chips"><span><i>[2]</i> the confirmed guest roster</span><span><i>[4]</i> the dietary list</span></div></div>
+  <div class="forward"><div class="lbl">MOST LOOKING FORWARD TO</div><div class="fill">[Add one word or sentence]</div></div>
+  <div class="foot mono"><span>RAISON D'ÊTRE · NEW YORK · NOV 14</span><span class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+</div>
+
+<!-- [2] -->
+<div class="card" style="--a:#9b8cff">
+  <div class="top mono"><span class="k">ODE · KEY [2]</span><span class="n">03 / 08 RESOLVED</span></div>
+  <div class="main">
+    <div class="photo"><b>PHOTO</b><span>drop portrait here</span></div>
+    <div class="id"><h1>Diana</h1><div class="role">Perception Architect</div>
+      <p>The guest app, the eight pages, and the data behind Decoded.</p></div>
+  </div>
+  <div class="band"><div class="lbl">DRAWS FROM</div><div class="chips"><span>Product design</span><span>Framer systems</span><span>Perception research</span></div></div>
+  <div class="band"><div class="lbl">HANDS OFF TO</div><div class="chips"><span><i>[1]</i> the guest paths</span><span><i>[7]</i> the eight pages</span></div></div>
+  <div class="forward"><div class="lbl">MOST LOOKING FORWARD TO</div><div class="fill">[Add one word or sentence]</div></div>
+  <div class="foot mono"><span>RAISON D'ÊTRE · NEW YORK · NOV 14</span><span class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span></div>
+</div>
+
+<!-- [3] -->
+<div class="card" style="--a:#2dd4bf">
+  <div class="top mono"><span class="k">ODE · KEY [3]</span><span class="n">04 / 08 RESOLVED</span></div>
+  <div class="main">
+    <div class="photo"><b>PHOTO</b><span>drop portrait here</span></div>
+    <div class="id"><h1>Demi</h1><div class="role">Spatial Architect</div>
+      <p>The room itself, moving from brutalist to intimate across the night.</p></div>
+  </div>
+  <div class="band"><div class="lbl">DRAWS FROM</div><div class="chips"><span>Spatial design</span><span>Holistic design</span><span>Material depth</span></div></div>
+  <div class="band"><div class="lbl">HANDS OFF TO</div><div class="chips"><span><i>[4]</i> the set room</span><span><i>[5]</i> the floor plan</span></div></div>
+  <div class="forward"><div class="lbl">MOST LOOKING FORWARD TO</div><div class="fill">[Add one word or sentence]</div></div>
+  <div class="foot mono"><span>RAISON D'ÊTRE · NEW YORK · NOV 14</span><span class="dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+</div>
+
+<!-- [4] -->
+<div class="card" style="--a:#a3e635">
+  <div class="top mono"><span class="k">ODE · KEY [4]</span><span class="n">05 / 08 RESOLVED</span></div>
+  <div class="main">
+    <div class="photo"><b>PHOTO</b><span>drop portrait here</span></div>
+    <div class="id"><h1>Bubae</h1><div class="role">Culinary Experience Lead</div>
+      <p>Six courses as an emotional arc, each with its pairing.</p></div>
+  </div>
+  <div class="band"><div class="lbl">DRAWS FROM</div><div class="chips"><span>Tasting menus</span><span>Wine + cocktail pairings</span><span>Kitchen direction</span></div></div>
+  <div class="band"><div class="lbl">HANDS OFF TO</div><div class="chips"><span><i>[1]</i> the dinner details</span><span><i>[2]</i> the six courses</span></div></div>
+  <div class="forward"><div class="lbl">MOST LOOKING FORWARD TO</div><div class="fill">[Add one word or sentence]</div></div>
+  <div class="foot mono"><span>RAISON D'ÊTRE · NEW YORK · NOV 14</span><span class="dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i></span></div>
+</div>
+
+<!-- [5] -->
+<div class="card" style="--a:#4da3ff">
+  <div class="top mono"><span class="k">ODE · KEY [5]</span><span class="n">06 / 08 RESOLVED</span></div>
+  <div class="main">
+    <div class="photo"><b>PHOTO</b><span>drop portrait here</span></div>
+    <div class="id"><h1>Dezja</h1><div class="role">Sensorium Designer</div>
+      <p>Everything guests smell, hear, touch, and take home.</p></div>
+  </div>
+  <div class="band"><div class="lbl">DRAWS FROM</div><div class="chips"><span>Scent + sound</span><span>Lighting</span><span>Tactile objects</span></div></div>
+  <div class="band"><div class="lbl">HANDS OFF TO</div><div class="chips"><span><i>[2]</i> the threshold room</span><span><i>[4]</i> the table</span></div></div>
+  <div class="forward"><div class="lbl">MOST LOOKING FORWARD TO</div><div class="fill">[Add one word or sentence]</div></div>
+  <div class="foot mono"><span>RAISON D'ÊTRE · NEW YORK · NOV 14</span><span class="dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></span></div>
+</div>
+
+<!-- [6] -->
+<div class="card" style="--a:#ff8a3d">
+  <div class="top mono"><span class="k">ODE · KEY [6]</span><span class="n">07 / 08 RESOLVED</span></div>
+  <div class="main">
+    <div class="photo"><b>PHOTO</b><span>drop portrait here</span></div>
+    <div class="id"><h1>Chirag</h1><div class="role">Partnerships Strategist</div>
+      <p>The brand pipeline — partners that serve a sense, not logos.</p></div>
+  </div>
+  <div class="band"><div class="lbl">DRAWS FROM</div><div class="chips"><span>Brand partnerships</span><span>Outreach ops</span><span>Negotiation</span></div></div>
+  <div class="band"><div class="lbl">HANDS OFF TO</div><div class="chips"><span><i>[1]</i> the check-in scripts</span><span><i>[2]</i> the confirmed stops</span></div></div>
+  <div class="forward"><div class="lbl">MOST LOOKING FORWARD TO</div><div class="fill">[Add one word or sentence]</div></div>
+  <div class="foot mono"><span>RAISON D'ÊTRE · NEW YORK · NOV 14</span><span class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i></span></div>
+</div>
+
+<!-- [7] -->
+<div class="card" style="--a:#ffd93d">
+  <div class="top mono"><span class="k">ODE · KEY [7]</span><span class="n">08 / 08 RESOLVED</span></div>
+  <div class="main">
+    <div class="photo"><b>PHOTO</b><span>drop portrait here</span></div>
+    <div class="id"><h1>Umika</h1><div class="role">Creative Technologist</div>
+      <p>Anticipation without spoilers, plus the tech that has to work.</p></div>
+  </div>
+  <div class="band"><div class="lbl">DRAWS FROM</div><div class="chips"><span>Creative tech</span><span>Content systems</span><span>Data storytelling</span></div></div>
+  <div class="band"><div class="lbl">HANDS OFF TO</div><div class="chips"><span><i>[0]</i> the report template</span><span><i>[1]</i> the follow-up link</span></div></div>
+  <div class="forward"><div class="lbl">MOST LOOKING FORWARD TO</div><div class="fill">[Add one word or sentence]</div></div>
+  <div class="foot mono"><span>RAISON D'ÊTRE · NEW YORK · NOV 14</span><span class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i></span></div>
+</div>
+
+</div>
+
+</body>
+</html>
